@@ -48,7 +48,7 @@ public final class LocalConfig {
             Files.createFile(path);
             restrictPermissions(path);
             try (OutputStream output = Files.newOutputStream(path)) {
-                p.store(output, "GTNH MCP local read-only server. Keep token private. Restart the game after changes.");
+                p.store(output, "GTNH MCP local server. Keep token private. Restart the game after changes.");
             }
         }
         restrictPermissions(path);

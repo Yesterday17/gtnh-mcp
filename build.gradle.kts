@@ -19,6 +19,7 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>().con
 // Opt-in, separately packaged game fixture. Never part of the published main jar.
 val acceptance = sourceSets.create("acceptance") {
     compileClasspath += sourceSets.main.get().compileClasspath
+    compileClasspath += sourceSets.main.get().output
     runtimeClasspath += sourceSets.main.get().runtimeClasspath
 }
 val acceptanceJar = tasks.register<Jar>("acceptanceJar") {

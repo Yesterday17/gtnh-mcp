@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -25,10 +26,13 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
+import net.minecraftforge.client.ClientCommandHandler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import codechicken.nei.recipe.GuiCraftingRecipe;
+import codechicken.nei.recipe.GuiUsageRecipe;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -55,6 +59,7 @@ public final class AcceptanceFixture {
     private volatile String phase = "waiting_for_main_menu";
     private volatile String lastCommand = "";
     private MinecraftServer preparedServer;
+    private ContextUiAcceptance contextUi;
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) throws IOException {
@@ -69,6 +74,7 @@ public final class AcceptanceFixture {
             .toAbsolutePath()
             .normalize();
         Files.createDirectories(directory);
+        contextUi = new ContextUiAcceptance(directory);
         worldFolder = System.getProperty("gtnhmcp.acceptance.world", "gtnhmcp-acceptance-rc2");
         if (!worldFolder.matches("gtnhmcp-acceptance-[a-zA-Z0-9_-]+")) {
             throw new IllegalArgumentException("Acceptance world must use the disposable gtnhmcp-acceptance- prefix");
@@ -101,6 +107,7 @@ public final class AcceptanceFixture {
                 }
             }
             if (clientTicks % 20 == 0) writeStatus(mc);
+            contextUi.tick();
         } catch (Throwable error) {
             failed = true;
             phase = "failed";
@@ -200,6 +207,22 @@ public final class AcceptanceFixture {
     private void executeCommand(Minecraft mc, String command) throws IOException {
         lastCommand = command;
         switch (command) {
+            case "test_context_ui":
+                contextUi.start();
+                break;
+            case "open_context_composer":
+                ClientCommandHandler.instance
+                    .executeCommand(mc.thePlayer, "/gtnhai Plan a production line using my existing machines.");
+                break;
+            case "open_nei_iron":
+                GuiCraftingRecipe.openRecipeGui("item", new ItemStack(Items.iron_ingot));
+                break;
+            case "open_nei_soul_sand":
+                GuiUsageRecipe.openRecipeGui("item", new ItemStack(Blocks.soul_sand));
+                break;
+            case "open_inventory":
+                mc.displayGuiScreen(new GuiInventory(mc.thePlayer));
+                break;
             case "pause":
                 if (mc.theWorld == null) throw new IllegalStateException("No world to pause");
                 mc.displayGuiScreen(new GuiIngameMenu());

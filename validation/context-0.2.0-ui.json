@@ -1,0 +1,249 @@
+{
+  "status": "passed",
+  "phase": "complete",
+  "method": "application_internal_integration; no OS input or visual/manual assertion",
+  "itemHover": "not_verified_by_this_fixture",
+  "checks": [
+    {
+      "check": "vanilla_chat_closes_after_local_command",
+      "passed": true
+    },
+    {
+      "check": "text_command_opens_production_composer",
+      "passed": true
+    },
+    {
+      "check": "text_only_has_no_attachment",
+      "passed": true
+    },
+    {
+      "check": "command_text_reaches_editable_input",
+      "passed": true
+    },
+    {
+      "check": "text_submit_closes_composer",
+      "passed": true
+    },
+    {
+      "check": "text_submit_publishes_exact_edited_text",
+      "passed": true
+    },
+    {
+      "check": "persisted_text_attachment_is_null",
+      "passed": true
+    },
+    {
+      "check": "text_message_has_captured_world_context",
+      "passed": true
+    },
+    {
+      "check": "vanilla_chat_closes_after_local_command",
+      "passed": true
+    },
+    {
+      "check": "cancel_returns_to_game",
+      "passed": true
+    },
+    {
+      "check": "cancel_does_not_publish",
+      "passed": true
+    },
+    {
+      "check": "real_nei_centrifuge_handler_selected",
+      "passed": true
+    },
+    {
+      "check": "nei_event_inserts_production_ai_button",
+      "passed": true
+    },
+    {
+      "check": "real_recipe_widget_accepts_ai_button_click",
+      "passed": true
+    },
+    {
+      "check": "recipe_click_opens_production_composer",
+      "passed": true
+    },
+    {
+      "check": "recipe_composer_captures_exact_handler_and_index",
+      "passed": true
+    },
+    {
+      "check": "recipe_attachment_title_names_category",
+      "passed": true
+    },
+    {
+      "check": "captured_recipe_includes_gt_machine_parameters",
+      "passed": true
+    },
+    {
+      "check": "recipe_composer_prefills_a_planning_request",
+      "passed": true
+    },
+    {
+      "check": "recipe_submit_returns_to_original_nei_screen",
+      "passed": true
+    },
+    {
+      "check": "persisted_recipe_snapshot_matches_clicked_recipe",
+      "passed": true
+    },
+    {
+      "check": "recipe_message_includes_extra_requirements",
+      "passed": true
+    }
+  ],
+  "messages": [
+    {
+      "kind": "text",
+      "id": "cca54c00-6e32-4b43-8fa3-0e3828223edb",
+      "sequence": 3
+    },
+    {
+      "kind": "recipe",
+      "id": "c60eb9e5-94f2-4083-b2f7-39d8dcf760f7",
+      "sequence": 4,
+      "recipe": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Multiblock Centrifuge",
+        "source": "NEI",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 12,
+            "y": -2,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "minecraft:soul_sand",
+                "meta": 0,
+                "displayName": "Soul Sand",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": -2,
+            "chance": 1000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 2836,
+                "displayName": "Saltpeter Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 120,
+            "y": -2,
+            "chance": 700,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 2,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 2535,
+                "displayName": "Coal Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "IC2:itemDust",
+                "meta": 2,
+                "displayName": "Coal Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 138,
+            "y": -2,
+            "chance": 9000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "minecraft:sand",
+                "meta": 0,
+                "displayName": "Sand",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 102,
+            "y": 34,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 52,
+                "displayName": "Oil",
+                "amount": 200,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:200L}",
+                "kind": "fluid",
+                "fluidName": "oil"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 12,
+          "durationTicks": 200,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.multicentrifuge",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        }
+      }
+    }
+  ]
+}

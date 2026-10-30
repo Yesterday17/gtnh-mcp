@@ -18,7 +18,7 @@ import codechicken.nei.recipe.StackInfo;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 
 /** Copies game objects into bounded JSON-compatible snapshots; never calls drawing or GUI tooltip methods. */
-final class NeiSerializer {
+public final class NeiSerializer {
 
     private static final int MAX_SLOTS = 64;
     private static final int MAX_ALTERNATIVES_PER_SLOT = 16;
@@ -28,7 +28,7 @@ final class NeiSerializer {
 
     private NeiSerializer() {}
 
-    static Map<String, Object> item(ItemStack stack) {
+    public static Map<String, Object> item(ItemStack stack) {
         return item(stack, new Budget(), true);
     }
 
@@ -78,7 +78,7 @@ final class NeiSerializer {
         }
     }
 
-    static Map<String, Object> recipe(IRecipeHandler handler, int index) {
+    public static Map<String, Object> recipe(IRecipeHandler handler, int index) {
         Map<String, Object> out = map();
         Budget budget = new Budget();
         Object gtRecipe = gregTechRecipe(handler, index);

@@ -1,3 +1,29 @@
+# 0.2.0 context-sharing acceptance
+
+Tested against the isolated official **GTNH 2.9.0-RC-2** Java 17–26 instance, on Apple Silicon with Java 25. No local beta2 instance or personal save was used.
+
+Production jar SHA-256: `fd4cabe4a500257c76b68b149d796e2af85ff2a5419a7575bf1c3189cd1c98d5`.
+
+- **45 automated tests passed**, plus Spotless/Checkstyle and a complete build. Coverage includes existing tools, persisted messages, corruption/write failures, world identities, optimistic revisions, official SDK resource subscriptions, reconnection, connection limits, session deletion/expiry races and deadline cancellation.
+- **35 live protocol checks passed** against the production shaded jar. All 15 tools were exercised, including real project/message SSE notifications, receipt retry idempotency, local reply deduplication, rejection with no active world, and retained project/recipe data after leaving and re-entering the save.
+- **22 game-internal GUI checks passed**: vanilla chat `/gtnhai` dispatch, deferred local composer, editing and Enter submission, cancellation, real NEI RecipeWidget AI button, exact recipe snapshot, GT metadata, additional requirements and return to the original recipe screen. The chosen soul-sand recipe was **Multiblock Centrifuge** (`gt.recipe.multicentrifuge`), preserving 12 EU/t, 200 ticks, probabilities and 200 mB oil.
+
+These GUI checks invoke the production GUI handlers inside the running game. **They are not OS input, screenshot/visual or manual acceptance. The hovered-item hotkey has compiled API coverage but has not been exercised live.** Native computer automation could not target the Java window. No host-specific conversation adapter is included or claimed tested; this release supplies the generic interface.
+
+Evidence: [summary](validation/context-0.2.0-summary.json), [live checks](validation/context-0.2.0-live.json), [GUI checks](validation/context-0.2.0-ui.json).
+
+To reproduce after enabling the separate acceptance fixture, run:
+
+```sh
+python3 scripts/rc2_context_acceptance.py --config /path/to/isolated/.minecraft/config/gtnhmcp.properties --control-dir /path/to/acceptance-control --output-dir /path/to/results
+```
+
+The script requires the disposable `gtnhmcp-acceptance-` world, opens the local test GUI, updates test planning memory, displays a local test reply, and unloads/rejoins that disposable save. It does not connect to an AI provider. The acceptance fixture is excluded from the production jar.
+
+---
+
+The following is the retained validation record for **0.1.0**, not a claim that its artifact hash identifies 0.2.0.
+
 # RC2 验证记录
 
 验证日期：2026-10-30。发布 jar SHA-256：`e5e37a7093765b6980a1f48e97fc04c93ab8b6dcc4bede1263d7edf9975705a8`。
