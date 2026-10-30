@@ -9,6 +9,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -24,7 +26,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,19 +40,25 @@ import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.TypeRef;
+import io.modelcontextprotocol.server.McpAsyncServer;
 import io.modelcontextprotocol.server.McpServer;
+import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpStatelessAsyncServer;
 import io.modelcontextprotocol.server.McpStatelessServerHandler;
+import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpStatelessServerTransport;
+import io.modelcontextprotocol.spec.McpStreamableServerSession;
+import io.modelcontextprotocol.spec.McpStreamableServerTransport;
+import io.modelcontextprotocol.spec.McpStreamableServerTransportProvider;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 /**
- * Loopback-only, authenticated Streamable HTTP adapter for the official MCP SDK. This intentionally implements the
- * 2025-11-25 baseline: stateless HTTP (no session IDs), JSON replies, and no GET/SSE subscription stream. The SDK owns
- * initialization, capability discovery, tool dispatch and JSON Schema validation. No Minecraft classes are referenced.
+ * Loopback-only, authenticated MCP 2025-11-25 Streamable HTTP adapter. A ResourceProvider enables bounded SDK
+ * sessions and GET/SSE resource subscriptions; the original tool-only constructors retain stateless HTTP behavior.
+ * The SDK owns protocol dispatch, subscriptions and input validation. No Minecraft classes are referenced.
  */
 public final class McpEndpoint implements AutoCloseable {
 
@@ -62,6 +72,7 @@ public final class McpEndpoint implements AutoCloseable {
     private final List<ToolDefinition> definitions;
     private final ToolExecutor toolExecutor;
     private final Limits limits;
+    private final ResourceProvider resources;
     private final McpJsonMapper jsonMapper;
     private HttpServer httpServer;
     private ThreadPoolExecutor httpWorkers;
@@ -69,6 +80,8 @@ public final class McpEndpoint implements AutoCloseable {
     private ScheduledThreadPoolExecutor deadlines;
     private Scheduler toolScheduler;
     private McpStatelessAsyncServer sdkServer;
+    private McpAsyncServer statefulServer;
+    private AutoCloseable resourceListener;
     private Adapter adapter;
     private boolean closed;
 
@@ -77,6 +90,17 @@ public final class McpEndpoint implements AutoCloseable {
     }
 
     public McpEndpoint(int port, String token, List<ToolDefinition> tools, ToolExecutor executor, Limits limits) {
+        this(port, token, tools, executor, null, limits);
+    }
+
+    public McpEndpoint(int port, String token, List<ToolDefinition> tools, ToolExecutor executor,
+        ResourceProvider resources) {
+        this(port, token, tools, executor, Objects.requireNonNull(resources, "resources"), Limits.defaults());
+    }
+
+    public McpEndpoint(int port, String token, List<ToolDefinition> tools, ToolExecutor executor,
+        ResourceProvider resources, Limits limits) {
+        this.resources = resources;
         if (port < 0 || port > 65535) {
             throw new IllegalArgumentException("Port must be between 0 and 65535");
         }
@@ -102,34 +126,75 @@ public final class McpEndpoint implements AutoCloseable {
             return;
         }
         try {
-            httpWorkers = pool("gtnh-mcp-http-", limits.maxConcurrentRequests + 2, limits.maxQueuedRequests);
+            httpWorkers = pool(
+                "gtnh-mcp-http-",
+                limits.maxConcurrentRequests + limits.maxEventStreams + 2,
+                limits.maxQueuedRequests);
             toolWorkers = pool("gtnh-mcp-tool-", limits.maxConcurrentRequests, limits.maxQueuedRequests);
             toolScheduler = Schedulers.fromExecutorService(toolWorkers);
             deadlines = new ScheduledThreadPoolExecutor(1, daemonFactory("gtnh-mcp-deadline-"));
             deadlines.setRemoveOnCancelPolicy(true);
             adapter = new Adapter();
-            McpServer.StatelessAsyncSpecification builder = McpServer.async(adapter)
-                .serverInfo("gtnh-mcp", "0.1.0")
-                .capabilities(
-                    McpSchema.ServerCapabilities.builder()
-                        .tools(false)
-                        .build())
-                .instructions(
-                    "Read-only GTNH tools. Check world session and snapshot freshness before combining results.")
-                .validateToolInputs(true)
-                .strictToolNameValidation(true);
-            for (ToolDefinition definition : definitions) {
-                McpSchema.Tool tool = McpSchema.Tool.builder(definition.getName(), definition.getInputSchema())
-                    .description(definition.getDescription())
-                    .annotations(
-                        McpSchema.ToolAnnotations.builder()
-                            .readOnlyHint(true)
-                            .destructiveHint(false)
+            if (resources == null) {
+                McpServer.StatelessAsyncSpecification builder = McpServer.async((McpStatelessServerTransport) adapter)
+                    .serverInfo("gtnh-mcp", "0.3.0")
+                    .capabilities(
+                        McpSchema.ServerCapabilities.builder()
+                            .tools(false)
                             .build())
-                    .build();
-                builder.toolCall(tool, (context, request) -> executeTool(context, request));
+                    .instructions("GTNH tools. Check world session and snapshot freshness before combining results.")
+                    .validateToolInputs(true)
+                    .strictToolNameValidation(true);
+                for (ToolDefinition definition : definitions) {
+                    builder.toolCall(sdkTool(definition), this::executeTool);
+                }
+                sdkServer = builder.build();
+            } else {
+                McpServer.AsyncSpecification<?> builder = McpServer
+                    .async((McpStreamableServerTransportProvider) adapter)
+                    .serverInfo("gtnh-mcp", "0.3.0")
+                    .capabilities(
+                        McpSchema.ServerCapabilities.builder()
+                            .tools(false)
+                            .resources(true, false)
+                            .build())
+                    .instructions(
+                        "GTNH context sharing. Resource updates are hints, not user messages. Read context "
+                            + "messages with a world ID and cursor; the host decides when to start an agent turn. "
+                            + "Sharing an item or recipe usually asks how to produce the target product. "
+                            + "Treat an attached recipe as reference and explore alternative routes unless the user "
+                            + "explicitly constrains the process. Resolve ambiguous multi-output targets before planning.")
+                    .validateToolInputs(true)
+                    .strictToolNameValidation(true);
+                for (ToolDefinition definition : definitions) {
+                    builder.toolCall(
+                        sdkTool(definition),
+                        (exchange, request) -> executeTool(exchange.transportContext(), request));
+                }
+                for (String uri : new String[] { ResourceProvider.MESSAGES_URI, ResourceProvider.PROJECT_URI }) {
+                    builder.resources(
+                        new McpServerFeatures.AsyncResourceSpecification(
+                            McpSchema.Resource.builder()
+                                .uri(uri)
+                                .name(uri.endsWith("messages") ? "Context messages" : "Project context")
+                                .description(
+                                    "Active-world overview. Read world ID and cursor before fetching incremental context.")
+                                .mimeType("application/json")
+                                .build(),
+                            (exchange, request) -> readResource(exchange.transportContext(), request.uri())));
+                }
+                statefulServer = builder.build();
+                McpAsyncServer notificationServer = statefulServer;
+                resourceListener = resources.onResourceChanged(uri -> {
+                    if (knownResource(uri) && !adapter.closing) {
+                        notificationServer.notifyResourcesUpdated(new McpSchema.ResourcesUpdatedNotification(uri))
+                            .subscribe(
+                                ignored -> {},
+                                error -> LOGGER.log(Level.FINE, "Resource notification failed", error));
+                    }
+                });
+                deadlines.scheduleWithFixedDelay(adapter::expireSessions, 1, 1, TimeUnit.SECONDS);
             }
-            sdkServer = builder.build();
             httpServer = HttpServer.create(
                 new InetSocketAddress(InetAddress.getByName("127.0.0.1"), requestedPort),
                 limits.maxQueuedRequests);
@@ -165,14 +230,23 @@ public final class McpEndpoint implements AutoCloseable {
             httpServer = null;
         }
         try {
+            if (resourceListener != null) {
+                resourceListener.close();
+                resourceListener = null;
+            }
+            if (statefulServer != null) {
+                statefulServer.closeGracefully()
+                    .block(Duration.ofSeconds(1));
+            }
             if (sdkServer != null) {
                 sdkServer.closeGracefully()
                     .block(Duration.ofSeconds(1));
             }
-        } catch (RuntimeException failure) {
+        } catch (Exception failure) {
             LOGGER.log(Level.WARNING, "MCP SDK close failed; shutting down owned workers", failure);
         } finally {
             sdkServer = null;
+            statefulServer = null;
             if (toolWorkers != null) {
                 toolWorkers.shutdownNow();
             }
@@ -191,6 +265,40 @@ public final class McpEndpoint implements AutoCloseable {
     @Override
     public void close() {
         stop();
+    }
+
+    private static McpSchema.Tool sdkTool(ToolDefinition definition) {
+        return McpSchema.Tool.builder(definition.getName(), definition.getInputSchema())
+            .description(definition.getDescription())
+            .annotations(
+                McpSchema.ToolAnnotations.builder()
+                    .readOnlyHint(definition.isReadOnly())
+                    .destructiveHint(false)
+                    .build())
+            .build();
+    }
+
+    private static boolean knownResource(String uri) {
+        return ResourceProvider.MESSAGES_URI.equals(uri) || ResourceProvider.PROJECT_URI.equals(uri);
+    }
+
+    private Mono<McpSchema.ReadResourceResult> readResource(McpTransportContext context, String uri) {
+        long deadline = Math.min(
+            (Long) context.get(DEADLINE_KEY),
+            System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(limits.toolTimeoutMillis));
+        return Mono.fromCallable(() -> RequestDeadline.call(deadline, () -> {
+            String text = jsonMapper.writeValueAsString(JsonValues.copyMap(resources.readResource(uri)));
+            McpSchema.ReadResourceResult result = new McpSchema.ReadResourceResult(
+                Collections.singletonList(new McpSchema.TextResourceContents(uri, "application/json", text)));
+            if (jsonMapper.writeValueAsBytes(result).length > limits.maxResponseBytes - 128) {
+                throw new IllegalStateException("Resource exceeds wire budget");
+            }
+            return result;
+        }))
+            .subscribeOn(toolScheduler)
+            .timeout(Duration.ofNanos(Math.max(1L, deadline - System.nanoTime())))
+            .onErrorMap(
+                error -> new McpError(new McpSchema.JSONRPCResponse.JSONRPCError(-32603, "Resource unavailable")));
     }
 
     private Mono<McpSchema.CallToolResult> executeTool(McpTransportContext context, McpSchema.CallToolRequest request) {
@@ -274,9 +382,40 @@ public final class McpEndpoint implements AutoCloseable {
         public final int maxResponseBytes;
         public final long toolTimeoutMillis;
         public final long requestTimeoutMillis;
+        public final int maxSessions;
+        public final int maxEventStreams;
+        public final long eventHeartbeatMillis;
+        public final long sessionTimeoutMillis;
 
         public Limits(int concurrent, int queued, int requestBytes, int responseBytes, long toolTimeoutMillis,
             long requestTimeoutMillis) {
+            this(
+                concurrent,
+                queued,
+                requestBytes,
+                responseBytes,
+                toolTimeoutMillis,
+                requestTimeoutMillis,
+                8,
+                4,
+                10000,
+                300000);
+        }
+
+        public Limits(int concurrent, int queued, int requestBytes, int responseBytes, long toolTimeoutMillis,
+            long requestTimeoutMillis, int maxSessions, int maxEventStreams, long eventHeartbeatMillis,
+            long sessionTimeoutMillis) {
+            if (maxSessions < 1 || maxSessions > 32
+                || maxEventStreams < 1
+                || maxEventStreams > maxSessions
+                || eventHeartbeatMillis < 20
+                || sessionTimeoutMillis <= requestTimeoutMillis) {
+                throw new IllegalArgumentException("Invalid MCP session limits");
+            }
+            this.maxSessions = maxSessions;
+            this.maxEventStreams = maxEventStreams;
+            this.eventHeartbeatMillis = eventHeartbeatMillis;
+            this.sessionTimeoutMillis = sessionTimeoutMillis;
             if (concurrent < 1 || concurrent > 64
                 || queued < 1
                 || queued > 256
@@ -299,11 +438,123 @@ public final class McpEndpoint implements AutoCloseable {
         }
     }
 
-    private final class Adapter implements McpStatelessServerTransport {
+    /** Coordinates SDK registrations with closure. Package visibility permits deterministic lifecycle race tests. */
+    static final class SessionState {
+
+        final McpStreamableServerSession session;
+        private final Object subscriptionLock;
+        private long lastAccess = System.nanoTime();
+        private int activeRequests;
+        private boolean closed;
+
+        SessionState(McpStreamableServerSession session, Object subscriptionLock) {
+            this.session = session;
+            this.subscriptionLock = subscriptionLock;
+        }
+
+        synchronized boolean touch() {
+            if (closed) {
+                return false;
+            }
+            lastAccess = System.nanoTime();
+            return true;
+        }
+
+        synchronized boolean beginRequest() {
+            if (!touch()) {
+                return false;
+            }
+            activeRequests++;
+            return true;
+        }
+
+        synchronized void endRequest() {
+            activeRequests--;
+            lastAccess = System.nanoTime();
+            if (closed && activeRequests == 0) {
+                closeSdk();
+            }
+        }
+
+        synchronized McpStreamableServerSession.McpStreamableServerSessionStream openListeningStream(
+            McpStreamableServerTransport transport) {
+            if (!touch()) {
+                return null;
+            }
+            return session.listeningStream(transport);
+        }
+
+        synchronized boolean expireIfIdle(long threshold) {
+            if (!closed && activeRequests == 0 && !session.hasOpenStream() && lastAccess < threshold) {
+                close();
+            }
+            return closed;
+        }
+
+        synchronized void close() {
+            if (closed) {
+                return;
+            }
+            closed = true;
+            session.releaseListeningStream();
+            // Already accepted POSTs may finish within their original deadline. Closing the SDK only after their
+            // leases end prevents a late subscribe handler from recreating a deleted session's subscription.
+            if (activeRequests == 0) {
+                closeSdk();
+            }
+        }
+
+        private void closeSdk() {
+            synchronized (subscriptionLock) {
+                session.close();
+            }
+        }
+    }
+
+    private final class Adapter implements McpStatelessServerTransport, McpStreamableServerTransportProvider {
 
         private final Semaphore requests = new Semaphore(limits.maxConcurrentRequests);
         private volatile McpStatelessServerHandler handler;
         private volatile boolean closing;
+        private final Map<String, SessionState> sessions = new ConcurrentHashMap<>();
+        private final Object subscriptionLock = new Object();
+        private final Semaphore eventStreams = new Semaphore(limits.maxEventStreams);
+        private McpStreamableServerSession.Factory sessionFactory;
+
+        @Override
+        public void setSessionFactory(McpStreamableServerSession.Factory factory) {
+            sessionFactory = Objects.requireNonNull(factory, "sessionFactory");
+        }
+
+        @Override
+        public Mono<Void> notifyClients(String method, Object params) {
+            return reactor.core.publisher.Flux.fromIterable(sessions.keySet())
+                .flatMap(id -> notifyClient(id, method, params))
+                .then();
+        }
+
+        @Override
+        public Mono<Void> notifyClient(String id, String method, Object params) {
+            return Mono.defer(() -> {
+                SessionState state = sessions.get(id);
+                return state == null || !state.session.hasListeningStream() ? Mono.empty()
+                    : state.session.sendNotification(method, params);
+            });
+        }
+
+        private void expireSessions() {
+            long threshold = System.nanoTime() - TimeUnit.MILLISECONDS.toNanos(limits.sessionTimeoutMillis);
+            for (SessionState state : sessions.values()) {
+                if (state.expireIfIdle(threshold)) {
+                    sessions.remove(state.session.getId(), state);
+                }
+            }
+        }
+
+        private void removeSession(SessionState state) {
+            state.close();
+            sessions.remove(state.session.getId(), state);
+        }
 
         @Override
         public void setMcpHandler(McpStatelessServerHandler handler) {
@@ -316,8 +567,22 @@ public final class McpEndpoint implements AutoCloseable {
         }
 
         @Override
+        public void close() {
+            closeGracefully().subscribe();
+        }
+
+        @Override
         public Mono<Void> closeGracefully() {
-            return Mono.fromRunnable(() -> closing = true);
+            return Mono.fromRunnable(() -> {
+                List<SessionState> closingSessions;
+                synchronized (sessions) {
+                    closing = true;
+                    closingSessions = new ArrayList<>(sessions.values());
+                }
+                for (SessionState state : closingSessions) {
+                    removeSession(state);
+                }
+            });
         }
 
         private void handle(HttpExchange exchange) throws IOException {
@@ -342,9 +607,14 @@ public final class McpEndpoint implements AutoCloseable {
                     httpError(exchange, 401, "Authentication required");
                     return;
                 }
-                if (!"POST".equals(exchange.getRequestMethod())) {
+                String httpMethod = exchange.getRequestMethod();
+                if (resources != null && ("GET".equals(httpMethod) || "DELETE".equals(httpMethod))) {
+                    handleSessionHttp(exchange);
+                    return;
+                }
+                if (!"POST".equals(httpMethod)) {
                     exchange.getResponseHeaders()
-                        .set("Allow", "POST");
+                        .set("Allow", resources == null ? "POST" : "POST, GET, DELETE");
                     httpError(exchange, 405, "This endpoint accepts POST only");
                     return;
                 }
@@ -396,6 +666,10 @@ public final class McpEndpoint implements AutoCloseable {
                 }
                 McpTransportContext context = McpTransportContext
                     .create(Collections.singletonMap(DEADLINE_KEY, requestDeadline));
+                if (resources != null) {
+                    handleStatefulPost(exchange, envelope, context, requestDeadline);
+                    return;
+                }
                 if (!envelope.containsKey("id")) {
                     handler
                         .handleNotification(
@@ -430,6 +704,278 @@ public final class McpEndpoint implements AutoCloseable {
                     requests.release();
                 }
                 exchange.close();
+            }
+        }
+
+        private void handleStatefulPost(HttpExchange exchange, Map<String, Object> envelope,
+            McpTransportContext context, long requestDeadline) throws Exception {
+            String method = (String) envelope.get("method");
+            Object id = envelope.get("id");
+            String sessionId = singleHeader(exchange.getRequestHeaders(), "Mcp-Session-Id");
+            if ("initialize".equals(method)) {
+                if (!envelope.containsKey("id") || sessionId != null) {
+                    rpcError(exchange, 400, id, -32600, "Initialize must be a request without a session ID");
+                    return;
+                }
+                McpSchema.InitializeRequest initialize = jsonMapper
+                    .convertValue(envelope.get("params"), McpSchema.InitializeRequest.class);
+                if (initialize == null || initialize.clientInfo() == null || initialize.capabilities() == null) {
+                    rpcError(exchange, 400, id, -32602, "Invalid initialize parameters");
+                    return;
+                }
+                McpStreamableServerSession.McpStreamableServerSessionInit initialized;
+                SessionState state;
+                synchronized (sessions) {
+                    if (closing) {
+                        httpError(exchange, 503, "Endpoint is stopping");
+                        return;
+                    }
+                    if (sessions.size() >= limits.maxSessions) {
+                        httpError(
+                            exchange,
+                            429,
+                            "Too many MCP sessions; close an existing session or retry after expiry");
+                        return;
+                    }
+                    initialized = sessionFactory.startSession(initialize);
+                    state = new SessionState(initialized.session(), subscriptionLock);
+                    sessions.put(state.session.getId(), state);
+                }
+                try {
+                    McpSchema.InitializeResult result = initialized.initResult()
+                        .block(remainingTime(requestDeadline));
+                    exchange.getResponseHeaders()
+                        .set("Mcp-Session-Id", state.session.getId());
+                    sendJson(exchange, 200, McpSchema.JSONRPCResponse.result(id, result));
+                } catch (Exception error) {
+                    removeSession(state);
+                    throw error;
+                }
+                return;
+            }
+            SessionState state = requireSession(exchange);
+            if (state == null) {
+                return;
+            }
+            if (!state.beginRequest()) {
+                httpError(exchange, 404, "MCP session expired or unknown; initialize a new session");
+                return;
+            }
+            try {
+                handleSessionPost(exchange, envelope, context, requestDeadline, state);
+            } finally {
+                state.endRequest();
+            }
+        }
+
+        private void handleSessionPost(HttpExchange exchange, Map<String, Object> envelope, McpTransportContext context,
+            long requestDeadline, SessionState state) throws Exception {
+            String method = (String) envelope.get("method");
+            Object id = envelope.get("id");
+            // The SDK accepts arbitrary subscription URIs. Restrict them to our two resources to bound its registry.
+            if ("resources/subscribe".equals(method) || "resources/unsubscribe".equals(method)) {
+                Object params = envelope.get("params");
+                Object uri = params instanceof Map<?, ?> ? ((Map<?, ?>) params).get("uri") : null;
+                if (!(uri instanceof String) || !knownResource((String) uri)) {
+                    rpcError(exchange, 200, id, -32002, "Unknown resource");
+                    return;
+                }
+            }
+            if (!envelope.containsKey("id")) {
+                state.session.accept(jsonMapper.convertValue(envelope, McpSchema.JSONRPCNotification.class))
+                    .contextWrite(ctx -> ctx.put(McpTransportContext.KEY, context))
+                    .block(remainingTime(requestDeadline));
+                exchange.sendResponseHeaders(202, -1);
+                return;
+            }
+            ReplyTransport reply = new ReplyTransport();
+            McpStreamableServerSession.McpStreamableServerSessionStream responseStream = state.session
+                .responseStream(reply);
+            try {
+                Mono<Void> dispatch = responseStream
+                    .handle(jsonMapper.convertValue(envelope, McpSchema.JSONRPCRequest.class))
+                    .contextWrite(ctx -> ctx.put(McpTransportContext.KEY, context));
+                if ("resources/subscribe".equals(method) || "resources/unsubscribe".equals(method)) {
+                    // SDK 2.1.0 changes a per-URI set in several steps. Serialize mutations and cleanup so another
+                    // session cannot lose its subscription when an empty set is concurrently removed. The lock covers
+                    // only the SDK's in-memory dispatch; socket writes and tools never hold it.
+                    synchronized (subscriptionLock) {
+                        dispatch.block(remainingTime(requestDeadline));
+                    }
+                } else {
+                    dispatch.block(remainingTime(requestDeadline));
+                }
+            } finally {
+                // Also release when conversion/deadline validation fails before subscribing to the SDK Mono.
+                responseStream.releaseTransport();
+            }
+            McpSchema.JSONRPCResponse response = reply.response.get();
+            if (response == null) {
+                rpcError(exchange, 500, id, -32603, "Internal error");
+            } else if (response.error() != null && response.error()
+                .code() == -32603) {
+                    rpcError(exchange, 200, id, -32603, "Internal error");
+                } else {
+                    sendJson(exchange, 200, response);
+                }
+        }
+
+        private SessionState requireSession(HttpExchange exchange) throws IOException {
+            String id = singleHeader(exchange.getRequestHeaders(), "Mcp-Session-Id");
+            if (id == null) {
+                httpError(exchange, 400, "Mcp-Session-Id is required after initialize");
+                return null;
+            }
+            SessionState state = sessions.get(id);
+            if (state == null || !state.touch()) {
+                httpError(exchange, 404, "MCP session expired or unknown; initialize a new session");
+                return null;
+            }
+            return state;
+        }
+
+        private void handleSessionHttp(HttpExchange exchange) throws Exception {
+            if (closing) {
+                httpError(exchange, 503, "Endpoint is stopping");
+                return;
+            }
+            if (!PROTOCOL_VERSION.equals(singleHeader(exchange.getRequestHeaders(), "MCP-Protocol-Version"))) {
+                httpError(exchange, 400, "MCP-Protocol-Version is required and must be supported");
+                return;
+            }
+            SessionState state = requireSession(exchange);
+            if (state == null) {
+                return;
+            }
+            if ("DELETE".equals(exchange.getRequestMethod())) {
+                removeSession(state);
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+            if (!accepts(singleHeader(exchange.getRequestHeaders(), "Accept"), "text/event-stream")) {
+                httpError(exchange, 406, "Accept must include text/event-stream");
+                return;
+            }
+            // No event IDs are emitted: delivery is a hint. Re-read resource/cursor after every reconnect.
+            if (!eventStreams.tryAcquire()) {
+                httpError(exchange, 429, "Too many event streams");
+                return;
+            }
+            SseTransport transport = new SseTransport(exchange);
+            McpStreamableServerSession.McpStreamableServerSessionStream stream = null;
+            try {
+                stream = state.openListeningStream(transport);
+                if (stream == null) {
+                    httpError(exchange, 404, "MCP session expired or unknown; initialize a new session");
+                    return;
+                }
+                exchange.getResponseHeaders()
+                    .set("Content-Type", "text/event-stream; charset=utf-8");
+                exchange.getResponseHeaders()
+                    .set("Cache-Control", "no-store");
+                exchange.getResponseHeaders()
+                    .set("X-Content-Type-Options", "nosniff");
+                exchange.sendResponseHeaders(200, 0);
+                transport.write(
+                    ": connected; re-read subscribed resources after reconnect\n\n".getBytes(StandardCharsets.UTF_8));
+                while (!closing && !transport.closed.get()) {
+                    byte[] frame = transport.queue.poll(limits.eventHeartbeatMillis, TimeUnit.MILLISECONDS);
+                    if (!transport.closed.get()) {
+                        transport.write(frame == null ? ": keepalive\n\n".getBytes(StandardCharsets.UTF_8) : frame);
+                    }
+                }
+            } catch (IOException disconnected) {
+                // Normal peer disconnect; SDK session survives until DELETE or idle expiry so a client can reconnect.
+            } finally {
+                if (stream != null) {
+                    stream.releaseTransport();
+                }
+                transport.close();
+                state.touch();
+                eventStreams.release();
+            }
+        }
+
+        private class ReplyTransport implements McpStreamableServerTransport {
+
+            private final AtomicReference<McpSchema.JSONRPCResponse> response = new AtomicReference<>();
+
+            @Override
+            public Mono<Void> sendMessage(McpSchema.JSONRPCMessage message) {
+                return sendMessage(message, null);
+            }
+
+            @Override
+            public Mono<Void> sendMessage(McpSchema.JSONRPCMessage message, String messageId) {
+                return Mono.fromRunnable(() -> {
+                    if (!(message instanceof McpSchema.JSONRPCResponse)
+                        || !response.compareAndSet(null, (McpSchema.JSONRPCResponse) message)) {
+                        throw new IllegalStateException("Only one JSON response is supported on this POST");
+                    }
+                });
+            }
+
+            @Override
+            public <T> T unmarshalFrom(Object value, TypeRef<T> type) {
+                return jsonMapper.convertValue(value, type);
+            }
+
+            @Override
+            public Mono<Void> closeGracefully() {
+                return Mono.empty();
+            }
+        }
+
+        private final class SseTransport extends ReplyTransport {
+
+            private final HttpExchange exchange;
+            private final ArrayBlockingQueue<byte[]> queue = new ArrayBlockingQueue<>(32);
+            private final AtomicBoolean closed = new AtomicBoolean();
+
+            private SseTransport(HttpExchange exchange) {
+                this.exchange = exchange;
+            }
+
+            @Override
+            public Mono<Void> sendMessage(McpSchema.JSONRPCMessage message, String messageId) {
+                return Mono.fromRunnable(() -> {
+                    if (closed.get()) {
+                        return;
+                    }
+                    try {
+                        byte[] frame = ("event: message\ndata: " + jsonMapper.writeValueAsString(message) + "\n\n")
+                            .getBytes(StandardCharsets.UTF_8);
+                        if (frame.length > limits.maxResponseBytes || !queue.offer(frame)) {
+                            // A slow consumer reconnects and recovers using its message cursor; never block a game
+                            // tick.
+                            close();
+                        }
+                    } catch (IOException error) {
+                        close();
+                    }
+                });
+            }
+
+            private void write(byte[] frame) throws IOException {
+                ScheduledFuture<?> deadline = deadlines
+                    .schedule(exchange::close, limits.requestTimeoutMillis, TimeUnit.MILLISECONDS);
+                try {
+                    exchange.getResponseBody()
+                        .write(frame);
+                    exchange.getResponseBody()
+                        .flush();
+                } finally {
+                    deadline.cancel(false);
+                }
+            }
+
+            @Override
+            public Mono<Void> closeGracefully() {
+                return Mono.fromRunnable(() -> {
+                    closed.set(true);
+                    queue.clear();
+                    queue.offer(new byte[0]);
+                });
             }
         }
 

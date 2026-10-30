@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "targetPack": "2.9.0-RC-2",
+  "jarSha256": "fd4cabe4a500257c76b68b149d796e2af85ff2a5419a7575bf1c3189cd1c98d5",
+  "automatedTests": 45,
+  "liveProtocolChecks": 35,
+  "applicationInternalGuiChecks": 22,
+  "allPassed": true,
+  "osInputAndVisualAcceptance": false,
+  "itemHoverKeyLiveAcceptance": false,
+  "hostSpecificAdapterIncluded": false
+}

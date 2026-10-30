@@ -93,6 +93,7 @@ public final class ToolCatalog {
                 "find_machines",
                 "List loaded tile entities within a bounded radius of the player. Results may include containers and other non-machine tiles. Singleplayer only; does not load chunks.",
                 map("radius", number(1, 32), "limit", number(1, 100))));
+        result.addAll(ContextToolCatalog.tools());
         return result;
     }
 

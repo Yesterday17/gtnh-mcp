@@ -1,0 +1,103 @@
+{
+  "version": "0.3.0",
+  "targetPack": "2.9.0-RC-2",
+  "productionJarSha256": "7884e25db35299095fdafac261d6d4dc5524671787cf21c6bb4a31e60d5e1608",
+  "build": "passed",
+  "javaTests": 60,
+  "suites": [
+    {
+      "name": "io.github.gtnhmcp.LocalConfigTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.ServerLifecycleTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.config.ServerLifecycleHttpTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.context.ContextStoreTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.context.ProductionIntentTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.context.WorldIdentityTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.game.GameTaskQueueTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.nei.IdentityDistinctTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.nei.NeiArgumentsTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.nei.RecipeCacheTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.protocol.McpEndpointIntegrationTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.protocol.McpResourceIntegrationTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "io.github.gtnhmcp.protocol.McpSessionLifecycleTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "packagingProbe": "passed: real loopback HTTP with fake game callback",
+  "realHttpConfigLifecycle": "passed",
+  "liveGameGuiValidation": "not run for 0.3.0; running 0.2.0 user playtest left unchanged"
+}

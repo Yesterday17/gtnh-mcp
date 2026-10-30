@@ -4,7 +4,7 @@
     {
       "modid": "${modId}",
       "name": "${modName}",
-      "description": "Local read-only MCP tools for GTNH 2.9.0-RC-2: NEI recipes, item search, player inventory and machine snapshots.",
+      "description": "Local MCP for GTNH 2.9.0-RC-2: read-only game tools, NEI context sharing, resource subscriptions and per-world planning memory.",
       "version": "${modVersion}",
       "mcversion": "${minecraftVersion}",
       "url": "",

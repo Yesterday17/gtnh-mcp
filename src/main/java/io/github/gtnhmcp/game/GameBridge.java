@@ -2,10 +2,13 @@ package io.github.gtnhmcp.game;
 
 import static io.github.gtnhmcp.game.Values.map;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
@@ -14,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -23,6 +27,8 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import io.github.gtnhmcp.GtnhMcpMod;
+import io.github.gtnhmcp.context.ContextStore;
+import io.github.gtnhmcp.context.WorldIdentity;
 import io.github.gtnhmcp.nei.NeiService;
 import io.github.gtnhmcp.protocol.ToolExecutionException;
 
@@ -31,11 +37,22 @@ public final class GameBridge {
     private final GameTaskQueue clientQueue = new GameTaskQueue(8);
     private final GameTaskQueue serverQueue = new GameTaskQueue(8);
     private final NeiService nei = new NeiService();
+    private final ContextStore contextStore;
+    private final Map<String, String> displayedReplies = new LinkedHashMap<>();
+    private volatile String contextFailure;
     private World previousWorld;
     private volatile String worldSession = "no_world";
     private volatile long clientTicks;
     private volatile long serverTicks;
     private volatile boolean closed;
+
+    public GameBridge() {
+        this(null);
+    }
+
+    public GameBridge(ContextStore contextStore) {
+        this.contextStore = contextStore;
+    }
 
     @SubscribeEvent
     public void clientTick(TickEvent.ClientTickEvent event) {
@@ -49,6 +66,32 @@ public final class GameBridge {
             clientQueue.invalidate();
             serverQueue.invalidate();
             nei.invalidate();
+            if (contextStore != null) {
+                contextStore.deactivateWorld();
+                contextFailure = null;
+                if (mc.theWorld != null && mc.isIntegratedServerRunning() && mc.getIntegratedServer() != null) {
+                    try {
+                        String folder = mc.getIntegratedServer()
+                            .getFolderName();
+                        Path saves = mc.mcDataDir.toPath()
+                            .toAbsolutePath()
+                            .normalize()
+                            .resolve("saves");
+                        Path save = saves.resolve(folder)
+                            .normalize();
+                        if (!save.startsWith(saves) || save.equals(saves)) {
+                            throw new IllegalStateException("Invalid local save directory");
+                        }
+                        contextStore.activateWorld(
+                            "singleplayer:" + WorldIdentity.loadOrCreate(save),
+                            mc.theWorld.getWorldInfo()
+                                .getWorldName());
+                    } catch (Exception failure) {
+                        contextFailure = "Planning memory could not be opened. Check the local game log.";
+                        GtnhMcpMod.LOG.error("Could not open world context storage", failure);
+                    }
+                }
+            }
         }
         clientTicks++;
         clientQueue.drain(2, 2_000_000L);
@@ -66,6 +109,17 @@ public final class GameBridge {
         if (closed) throw new ToolExecutionException("stopped", "The game bridge has stopped.");
         String expectedSession = worldSession;
         try {
+            if (Arrays
+                .asList(
+                    "get_messages",
+                    "get_message",
+                    "ack_message",
+                    "get_project_memory",
+                    "update_project_memory",
+                    "reply_in_game")
+                .contains(tool)) {
+                return contextTool(tool, arguments);
+            }
             Map<String, Object> result;
             if ("get_context".equals(tool)) {
                 return clientQueue.submitAndWait(this::context, 3500);
@@ -144,11 +198,145 @@ public final class GameBridge {
                     "authoritativeWorldReads",
                     local && mc.theWorld != null,
                     "writeActions",
-                    false),
+                    false,
+                    "localContextWrites",
+                    contextStore != null),
                 "summary",
-                "GTNH MCP 0.1.0; read-only, NEI recipe queries and bounded world snapshots."),
+                "GTNH MCP 0.3.0; read-only game queries, production-goal sharing and local planning memory.",
+                "worldId",
+                contextStore == null ? null : contextStore.activeWorldId(),
+                "contextSharing",
+                map(
+                    "available",
+                    contextStore != null && contextStore.activeWorldId() != null,
+                    "unavailableReason",
+                    contextFailure,
+                    "clientAdapterRequired",
+                    true,
+                    "projectMemoryIsAuthoritative",
+                    false)),
             "client",
             clientTicks);
+    }
+
+    /** Called by the local GUI before opening the composer, while its selection still exists. */
+    public Map<String, Object> captureShareContext() {
+        if (contextStore == null || contextStore.activeWorldId() == null) {
+            throw new IllegalStateException(
+                contextFailure == null ? "Context sharing currently requires a loaded singleplayer world."
+                    : contextFailure);
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        if (closed || mc.thePlayer == null || mc.theWorld != previousWorld) {
+            throw new IllegalStateException("The world is changing. Try again after it finishes loading.");
+        }
+        Map<String, Object> captured = context();
+        MovingObjectPosition hit = mc.objectMouseOver;
+        if (hit != null && hit.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
+            && mc.theWorld.blockExists(hit.blockX, hit.blockY, hit.blockZ)) {
+            captured.put("target", GameSnapshots.block(mc.theWorld, hit.blockX, hit.blockY, hit.blockZ, false));
+        }
+        try {
+            captured.put(
+                "projectRevision",
+                contextStore.readProject(contextStore.activeWorldId())
+                    .get("revision"));
+        } catch (Exception failure) {
+            throw new IllegalStateException("Could not read planning memory: " + failure.getMessage(), failure);
+        }
+        return captured;
+    }
+
+    /** Local explicit user action; the attachment was already detached when the selection was captured. */
+    public Map<String, Object> submitContextMessage(Map<String, Object> attachment, String text,
+        Map<String, Object> capturedContext) {
+        if (closed || contextStore == null
+            || capturedContext == null
+            || !worldSession.equals(capturedContext.get("worldSessionId"))
+            || Minecraft.getMinecraft().theWorld != previousWorld
+            || !Objects.equals(contextStore.activeWorldId(), capturedContext.get("worldId"))) {
+            throw new IllegalStateException("The world changed. Capture the item or recipe again.");
+        }
+        try {
+            return contextStore.publish((String) capturedContext.get("worldId"), attachment, text, capturedContext);
+        } catch (Exception failure) {
+            throw new IllegalStateException("Message was not queued: " + failure.getMessage(), failure);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> contextTool(String tool, Map<String, Object> args) throws Exception {
+        if (contextStore == null)
+            throw new ToolExecutionException("context_unavailable", "Context storage is not enabled.");
+        String world = stringArgument(args, "worldId", 80);
+        if ("get_messages".equals(tool)) {
+            return contextStore.messages(
+                world,
+                Values.integer(args, "afterSequence", 0, 0, Integer.MAX_VALUE),
+                Values.integer(args, "limit", 10, 1, 20));
+        }
+        if ("get_project_memory".equals(tool)) return contextStore.readProject(world);
+        if ("update_project_memory".equals(tool)) {
+            Object project = args.get("project");
+            if (!(project instanceof Map<?, ?>)) throw new IllegalArgumentException("project must be a JSON object");
+            return contextStore.updateProject(
+                world,
+                Values.integer(args, "expectedRevision", -1, 0, Integer.MAX_VALUE),
+                (Map<String, Object>) project);
+        }
+        String id = stringArgument(args, "messageId", 80);
+        if ("get_message".equals(tool)) return contextStore.message(world, id);
+        if ("ack_message".equals(tool)) {
+            return contextStore.acknowledge(world, id, stringArgument(args, "consumerId", 128));
+        }
+        contextStore.message(world, id); // Reject replies to unknown or evicted messages before touching the game.
+        String replyId = stringArgument(args, "replyId", 128);
+        String text = stringArgument(args, "text", 4096);
+        return clientQueue.submitAndWait(() -> {
+            Minecraft mc = requireWorld();
+            if (!world.equals(contextStore.activeWorldId()) || mc.theWorld != previousWorld) {
+                throw new ToolExecutionException("world_changed", "Reply belongs to a world that is not active.");
+            }
+            String key = world + ":" + id + ":" + replyId;
+            String previous = displayedReplies.get(key);
+            if (previous != null && !previous.equals(text)) {
+                throw new IllegalArgumentException("replyId was already used with different text");
+            }
+            if (previous == null) {
+                // ChatComponentText never executes commands or sends a packet to a server.
+                String plain = text.replaceAll("\\u00a7.", "")
+                    .replaceAll("[\\p{Cntrl}&&[^\\n\\t]]", "");
+                mc.thePlayer.addChatMessage(new ChatComponentText("[AI] " + plain));
+                displayedReplies.put(key, text);
+                while (displayedReplies.size() > 256) displayedReplies.remove(
+                    displayedReplies.keySet()
+                        .iterator()
+                        .next());
+            }
+            return map(
+                "worldId",
+                world,
+                "messageId",
+                id,
+                "replyId",
+                replyId,
+                "displayed",
+                true,
+                "duplicate",
+                previous != null,
+                "scope",
+                "local_chat");
+        }, 3500);
+    }
+
+    private static String stringArgument(Map<String, Object> args, String name, int maxLength) {
+        Object value = args.get(name);
+        if (!(value instanceof String) || ((String) value).trim()
+            .isEmpty() || ((String) value).length() > maxLength) {
+            throw new IllegalArgumentException(
+                name + " must be a nonempty string of at most " + maxLength + " characters");
+        }
+        return (String) value;
     }
 
     private Request capture(String tool, Map<String, Object> args) throws ToolExecutionException {

@@ -2,7 +2,7 @@
 
 This is a separate test-only Forge mod. `src/acceptance` is not part of the production source set, production jar, or production sources jar. It does not add any MCP tools or change production tool behavior.
 
-Build it with `./gradlew reobfAcceptanceJar`. Install **both** `gtnhmcp-0.1.0.jar` and `gtnhmcp-acceptance-0.1.0.jar` only in an isolated GTNH 2.9.0-RC-2 test instance. Enable the fixture with JVM properties:
+Build it with `./gradlew reobfAcceptanceJar`. Install **both** `gtnhmcp-0.3.0.jar` and `gtnhmcp-acceptance-0.3.0.jar` only in an isolated GTNH 2.9.0-RC-2 test instance. Enable the fixture with JVM properties:
 
 ```text
 -Dgtnhmcp.acceptance=true
@@ -29,6 +29,10 @@ Write a single command into `command.txt` inside the control directory. The fixt
 - `resume`: close the pause menu.
 - `unload`: save/disconnect from the test world and return to the main menu.
 - `rejoin`: reopen the same test world; only valid after unloading.
+- `test_context_ui`: run in-game integration checks against the production composer and native NEI recipe button. Writes `context-ui-result.json`; this is programmatic GUI testing, not an OS click test.
+- `open_context_composer`: open the production local chat composer through `/gtnhai`.
+- `open_nei_iron` / `open_nei_soul_sand`: open real NEI recipe/usage views for UI acceptance.
+- `open_inventory`: open the actual player inventory for hover capture acceptance.
 - `quit`: shut down this test client.
 
 Wait for the corresponding actual `worldLoaded`, `paused`, and `ready` fields, not only the command acknowledgement. An invalid command or fixture exception changes `phase` to `failed` and logs the failure in the game log. This control path is test code running through Minecraft APIs, independent of the production MCP endpoint.
