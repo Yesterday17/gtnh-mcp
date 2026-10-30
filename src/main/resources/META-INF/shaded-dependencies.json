@@ -1,0 +1,93 @@
+[
+  {
+    "coordinate": "io.modelcontextprotocol.sdk:mcp:2.1.0",
+    "license": "MIT",
+    "source": "https://github.com/modelcontextprotocol/java-sdk/tree/v2.1.0",
+    "sha256": "34df64fbfa961786021ec3a6b1830c4fe92f64e34b9a41191ae2a7482db26fb1",
+    "licenseDirectory": "META-INF/licenses/mcp-2.1.0"
+  },
+  {
+    "coordinate": "io.modelcontextprotocol.sdk:mcp-json-jackson3:2.1.0",
+    "license": "MIT",
+    "source": "https://github.com/modelcontextprotocol/java-sdk/tree/v2.1.0",
+    "sha256": "cb7a41816f457ab9db70e58b224d0d5a928608717c437a0255591f0d13358fdf",
+    "licenseDirectory": "META-INF/licenses/mcp-json-jackson3-2.1.0"
+  },
+  {
+    "coordinate": "io.modelcontextprotocol.sdk:mcp-core:2.1.0",
+    "license": "MIT",
+    "source": "https://github.com/modelcontextprotocol/java-sdk/tree/v2.1.0",
+    "sha256": "450eb2278a8bd8ba694064667f84d26a52e2d6845ec81dfb42885cd5e96a7f75",
+    "licenseDirectory": "META-INF/licenses/mcp-core-2.1.0"
+  },
+  {
+    "coordinate": "org.slf4j:slf4j-api:2.0.17",
+    "license": "MIT",
+    "source": "https://www.slf4j.org/license.html",
+    "sha256": "7b751d952061954d5abfed7181c1f645d336091b679891591d63329c622eb832",
+    "licenseDirectory": "META-INF/licenses/slf4j-api-2.0.17"
+  },
+  {
+    "coordinate": "com.fasterxml.jackson.core:jackson-annotations:2.21",
+    "license": "Apache-2.0",
+    "source": "https://github.com/FasterXML/jackson-annotations",
+    "sha256": "53ca085f4a150f703f49e1aabd935bd03b43e1ea3d55d135438292af22cef56b",
+    "licenseDirectory": "META-INF/licenses/jackson-annotations-2.21"
+  },
+  {
+    "coordinate": "io.projectreactor:reactor-core:3.7.0",
+    "license": "Apache-2.0",
+    "source": "https://github.com/reactor/reactor-core/tree/v3.7.0",
+    "sha256": "14aebad4882def1f88389656cf9b46177f6b090bb00a0707025d76aeacaaead2",
+    "licenseDirectory": "META-INF/licenses/reactor-core-3.7.0"
+  },
+  {
+    "coordinate": "org.reactivestreams:reactive-streams:1.0.4",
+    "license": "MIT-0",
+    "source": "https://github.com/reactive-streams/reactive-streams-jvm/tree/v1.0.4",
+    "sha256": "f75ca597789b3dac58f61857b9ac2e1034a68fa672db35055a8fb4509e325f28",
+    "licenseDirectory": "META-INF/licenses/reactive-streams-1.0.4"
+  },
+  {
+    "coordinate": "tools.jackson.core:jackson-databind:3.1.4",
+    "license": "Apache-2.0",
+    "source": "https://github.com/FasterXML/jackson-databind",
+    "sha256": "14034bfdf392b6ebec1b4bb6c1de29d604f0aa97251259a19d5f19af8719bb20",
+    "licenseDirectory": "META-INF/licenses/jackson-databind-3.1.4"
+  },
+  {
+    "coordinate": "tools.jackson.core:jackson-core:3.1.4",
+    "license": "Apache-2.0",
+    "source": "https://github.com/FasterXML/jackson-core",
+    "sha256": "3bda1cd6eff0a8d47bdfcaeae7c2bd5311d6c8ed494ef5f3e51029bb44aa9bdf",
+    "licenseDirectory": "META-INF/licenses/jackson-core-3.1.4"
+  },
+  {
+    "coordinate": "com.networknt:json-schema-validator:3.0.6",
+    "license": "Apache-2.0",
+    "source": "https://github.com/networknt/json-schema-validator/tree/3.0.6",
+    "sha256": "f6f727370bbc53de6d1321710b7e90288774042e69e3bb6992d6801048f56800",
+    "licenseDirectory": "META-INF/licenses/json-schema-validator-3.0.6"
+  },
+  {
+    "coordinate": "com.ethlo.time:itu:1.14.0",
+    "license": "Apache-2.0",
+    "source": "https://github.com/ethlo/itu/tree/v1.14.0",
+    "sha256": "5cf40ab0cc77828ab2b875b1f3ecd71c8295d7721933476abc2e08fddcea164a",
+    "licenseDirectory": "META-INF/licenses/itu-1.14.0"
+  },
+  {
+    "coordinate": "tools.jackson.dataformat:jackson-dataformat-yaml:3.1.4",
+    "license": "Apache-2.0",
+    "source": "https://github.com/FasterXML/jackson-dataformats-text",
+    "sha256": "f583bd16b6d39a0ec900e37948507616bb651caea58fb882560d7e63efbe56db",
+    "licenseDirectory": "META-INF/licenses/jackson-dataformat-yaml-3.1.4"
+  },
+  {
+    "coordinate": "org.snakeyaml:snakeyaml-engine:3.0.1",
+    "license": "Apache-2.0",
+    "source": "https://bitbucket.org/snakeyaml/snakeyaml-engine/src/snakeyaml-engine-3.0.1/",
+    "sha256": "0b638c8806112215e02e58e95cbd9e9a69d4bd540991f47553d053919994cc94",
+    "licenseDirectory": "META-INF/licenses/snakeyaml-engine-3.0.1"
+  }
+]

@@ -1,0 +1,1788 @@
+{
+  "targetPack": "2.9.0-RC-2",
+  "status": "passed",
+  "lifecycleStatus": "passed",
+  "startedAtEpochMillis": 1793345450375,
+  "finishedAtEpochMillis": 1793345468251,
+  "checks": [
+    {
+      "name": "all nine expected tools are registered",
+      "passed": true
+    },
+    {
+      "name": "RC2 singleplayer world is loaded",
+      "passed": true
+    },
+    {
+      "name": "RC2 NEI version matches",
+      "passed": true
+    },
+    {
+      "name": "RC2 GregTech version matches",
+      "passed": true
+    },
+    {
+      "name": "world has a session identity",
+      "passed": true
+    },
+    {
+      "name": "Player inventory is authoritative",
+      "passed": true
+    },
+    {
+      "name": "Player inventory snapshot is complete",
+      "passed": true
+    },
+    {
+      "name": "Player inventory contains exactly 32 minecraft:iron_ingot (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Player inventory contains exactly 16 minecraft:redstone (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Player inventory contains exactly 3 minecraft:diamond (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "NEI search returns iron ingot meta 0",
+      "passed": true
+    },
+    {
+      "name": "solidifier mold is non-consumed with quantity zero",
+      "passed": true
+    },
+    {
+      "name": "solidifier consumes 144 mB molten iron",
+      "passed": true
+    },
+    {
+      "name": "solidifier produces one iron ingot",
+      "passed": true
+    },
+    {
+      "name": "solidifier duration is 32 ticks",
+      "passed": true
+    },
+    {
+      "name": "centrifuge output probabilities preserve 1000/700/9000 of 10000",
+      "passed": true
+    },
+    {
+      "name": "centrifuge produces 200 mB fluid",
+      "passed": true
+    },
+    {
+      "name": "centrifuge duration and EU/t are preserved",
+      "passed": true
+    },
+    {
+      "name": "nearby scan is authoritative",
+      "passed": true
+    },
+    {
+      "name": "nearby scan includes fixture chest",
+      "passed": true
+    },
+    {
+      "name": "nearby scan includes fixture furnace",
+      "passed": true
+    },
+    {
+      "name": "explicit fixture target is a chest",
+      "passed": true
+    },
+    {
+      "name": "Inspected chest is authoritative",
+      "passed": true
+    },
+    {
+      "name": "Inspected chest snapshot is complete",
+      "passed": true
+    },
+    {
+      "name": "Inspected chest contains exactly 64 minecraft:iron_ingot (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Inspected chest contains exactly 32 minecraft:redstone (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Inspected chest contains exactly 16 minecraft:log (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Chest inventory is authoritative",
+      "passed": true
+    },
+    {
+      "name": "Chest inventory snapshot is complete",
+      "passed": true
+    },
+    {
+      "name": "Chest inventory contains exactly 64 minecraft:iron_ingot (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Chest inventory contains exactly 32 minecraft:redstone (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Chest inventory contains exactly 16 minecraft:log (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "crosshair resolves the fixture chest",
+      "passed": true
+    },
+    {
+      "name": "crosshair snapshot is authoritative",
+      "passed": true
+    },
+    {
+      "name": "paused inventory returns world_paused",
+      "passed": true
+    },
+    {
+      "name": "Resumed player inventory is authoritative",
+      "passed": true
+    },
+    {
+      "name": "Resumed player inventory snapshot is complete",
+      "passed": true
+    },
+    {
+      "name": "Resumed player inventory contains exactly 32 minecraft:iron_ingot (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Resumed player inventory contains exactly 16 minecraft:redstone (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Resumed player inventory contains exactly 3 minecraft:diamond (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "resume keeps the same world session",
+      "passed": true
+    },
+    {
+      "name": "unload reports no loaded world",
+      "passed": true
+    },
+    {
+      "name": "rejoin has a new world session",
+      "passed": true
+    },
+    {
+      "name": "Rejoined player inventory is authoritative",
+      "passed": true
+    },
+    {
+      "name": "Rejoined player inventory snapshot is complete",
+      "passed": true
+    },
+    {
+      "name": "Rejoined player inventory contains exactly 32 minecraft:iron_ingot (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Rejoined player inventory contains exactly 16 minecraft:redstone (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "Rejoined player inventory contains exactly 3 minecraft:diamond (meta 0)",
+      "passed": true
+    },
+    {
+      "name": "old recipe ID invalidates on world change",
+      "passed": true
+    },
+    {
+      "name": "recipe invalidation was observed before natural TTL expiry",
+      "passed": true
+    }
+  ],
+  "releaseJarSha256": "e5e37a7093765b6980a1f48e97fc04c93ab8b6dcc4bede1263d7edf9975705a8",
+  "selectedResponses": [
+    {
+      "tool": "get_context",
+      "arguments": {},
+      "isError": false,
+      "data": {
+        "targetPack": "2.9.0-RC-2",
+        "installedMods": {
+          "NotEnoughItems": "2.8.155-GTNH",
+          "gregtech": "5.09.54.205",
+          "gtnhlib": "0.11.52"
+        },
+        "worldLoaded": true,
+        "mode": "singleplayer",
+        "paused": false,
+        "player": {
+          "name": "McpAcceptance",
+          "dimension": 0,
+          "position": {
+            "x": 0.5,
+            "y": 66.62000000476837,
+            "z": 0.5
+          },
+          "health": 20.0,
+          "food": 20,
+          "selectedSlot": 0,
+          "heldItem": {
+            "registryName": "minecraft:iron_ingot",
+            "meta": 0,
+            "displayName": "Iron Ingot",
+            "count": 32,
+            "nbt": null,
+            "nbtOmitted": false
+          }
+        },
+        "capabilities": {
+          "recipes": true,
+          "playerInventory": true,
+          "authoritativeWorldReads": true,
+          "writeActions": false
+        },
+        "summary": "GTNH MCP 0.1.0; read-only, NEI recipe queries and bounded world snapshots.",
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "source": "client",
+        "sampledTick": 967,
+        "sampledAtMillis": 1793345450915
+      }
+    },
+    {
+      "tool": "get_inventory",
+      "arguments": {},
+      "isError": false,
+      "data": {
+        "scope": "player",
+        "inventory": {
+          "slotCount": 41,
+          "slots": [
+            {
+              "slot": 0,
+              "item": {
+                "registryName": "minecraft:iron_ingot",
+                "meta": 0,
+                "displayName": "Iron Ingot",
+                "count": 32,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 1,
+              "item": {
+                "registryName": "minecraft:redstone",
+                "meta": 0,
+                "displayName": "Redstone Dust",
+                "count": 16,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 2,
+              "item": {
+                "registryName": "minecraft:diamond",
+                "meta": 0,
+                "displayName": "Diamond",
+                "count": 3,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            }
+          ],
+          "complete": true
+        },
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "source": "integrated_server",
+        "sampledTick": 954,
+        "sampledAtMillis": 1793345450982
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1876"
+      },
+      "isError": false,
+      "data": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Fluid Solidifier",
+        "source": "nei_client",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 48,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 32309,
+                "displayName": "Mold (Nuggets)",
+                "amount": 0,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": true
+          },
+          {
+            "role": "input",
+            "x": 48,
+            "y": 52,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 624,
+                "displayName": "Molten Cast Iron",
+                "amount": 16,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:16L}",
+                "kind": "fluid",
+                "fluidName": "molten.castiron"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "result": null,
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 3,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 9032,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "Thaumcraft:ItemNugget",
+                "meta": 0,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "MagicBees:beeNugget",
+                "meta": 0,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 4,
+          "durationTicks": 16,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.fluidsolidifier",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        },
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1876",
+        "epoch": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a",
+        "cacheTtlSeconds": 300,
+        "capturedAtEpochMillis": 1793345454811,
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "sampledTick": 1050,
+        "sampledAtMillis": 1793345455067
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1877"
+      },
+      "isError": false,
+      "data": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Fluid Solidifier",
+        "source": "nei_client",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 48,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 32309,
+                "displayName": "Mold (Nuggets)",
+                "amount": 0,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": true
+          },
+          {
+            "role": "input",
+            "x": 48,
+            "y": 52,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 288,
+                "displayName": "Molten Iron",
+                "amount": 16,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:16L}",
+                "kind": "fluid",
+                "fluidName": "molten.iron"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "result": null,
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 3,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 9032,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "Thaumcraft:ItemNugget",
+                "meta": 0,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "MagicBees:beeNugget",
+                "meta": 0,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 4,
+          "durationTicks": 16,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.fluidsolidifier",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        },
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1877",
+        "epoch": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a",
+        "cacheTtlSeconds": 300,
+        "capturedAtEpochMillis": 1793345454812,
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "sampledTick": 1052,
+        "sampledAtMillis": 1793345455175
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1878"
+      },
+      "isError": false,
+      "data": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Fluid Solidifier",
+        "source": "nei_client",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 48,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 32309,
+                "displayName": "Mold (Nuggets)",
+                "amount": 0,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": true
+          },
+          {
+            "role": "input",
+            "x": 48,
+            "y": 52,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 288,
+                "displayName": "Molten Iron",
+                "amount": 16,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:16L}",
+                "kind": "fluid",
+                "fluidName": "molten.iron"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "result": null,
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 3,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 9032,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "Thaumcraft:ItemNugget",
+                "meta": 0,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "MagicBees:beeNugget",
+                "meta": 0,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 4,
+          "durationTicks": 16,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.fluidsolidifier",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        },
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1878",
+        "epoch": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a",
+        "cacheTtlSeconds": 300,
+        "capturedAtEpochMillis": 1793345454812,
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "sampledTick": 1054,
+        "sampledAtMillis": 1793345455266
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1879"
+      },
+      "isError": false,
+      "data": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Fluid Solidifier",
+        "source": "nei_client",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 48,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 32309,
+                "displayName": "Mold (Nuggets)",
+                "amount": 0,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": true
+          },
+          {
+            "role": "input",
+            "x": 48,
+            "y": 52,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 288,
+                "displayName": "Molten Iron",
+                "amount": 16,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:16L}",
+                "kind": "fluid",
+                "fluidName": "molten.iron"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "result": null,
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 3,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 9032,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "Thaumcraft:ItemNugget",
+                "meta": 0,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "MagicBees:beeNugget",
+                "meta": 0,
+                "displayName": "Iron Nugget",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 4,
+          "durationTicks": 16,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.fluidsolidifier",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        },
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1879",
+        "epoch": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a",
+        "cacheTtlSeconds": 300,
+        "capturedAtEpochMillis": 1793345454812,
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "sampledTick": 1055,
+        "sampledAtMillis": 1793345455316
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1880"
+      },
+      "isError": false,
+      "data": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Fluid Solidifier",
+        "source": "nei_client",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 48,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 32306,
+                "displayName": "Mold (Ingot)",
+                "amount": 0,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": true
+          },
+          {
+            "role": "input",
+            "x": 48,
+            "y": 52,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 624,
+                "displayName": "Molten Cast Iron",
+                "amount": 144,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:144L}",
+                "kind": "fluid",
+                "fluidName": "molten.castiron"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "result": null,
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "minecraft:iron_ingot",
+                "meta": 0,
+                "displayName": "Iron Ingot",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 7,
+          "durationTicks": 32,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.fluidsolidifier",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        },
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1880",
+        "epoch": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a",
+        "cacheTtlSeconds": 300,
+        "capturedAtEpochMillis": 1793345454812,
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "sampledTick": 1056,
+        "sampledAtMillis": 1793345455376
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1881"
+      },
+      "isError": false,
+      "data": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Fluid Solidifier",
+        "source": "nei_client",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 48,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 32306,
+                "displayName": "Mold (Ingot)",
+                "amount": 0,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": true
+          },
+          {
+            "role": "input",
+            "x": 48,
+            "y": 52,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 288,
+                "displayName": "Molten Iron",
+                "amount": 144,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:144L}",
+                "kind": "fluid",
+                "fluidName": "molten.iron"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "result": null,
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "minecraft:iron_ingot",
+                "meta": 0,
+                "displayName": "Iron Ingot",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 8,
+          "durationTicks": 32,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.fluidsolidifier",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        },
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1881",
+        "epoch": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a",
+        "cacheTtlSeconds": 300,
+        "capturedAtEpochMillis": 1793345454812,
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "sampledTick": 1058,
+        "sampledAtMillis": 1793345455474
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1983"
+      },
+      "isError": false,
+      "data": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Centrifuge",
+        "source": "nei_client",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 30,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "minecraft:soul_sand",
+                "meta": 0,
+                "displayName": "Soul Sand",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "result": null,
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": 5,
+            "chance": 1000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 2836,
+                "displayName": "Saltpeter Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 120,
+            "y": 5,
+            "chance": 700,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 2,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 2535,
+                "displayName": "Coal Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "IC2:itemDust",
+                "meta": 2,
+                "displayName": "Coal Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 138,
+            "y": 5,
+            "chance": 9000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "minecraft:sand",
+                "meta": 0,
+                "displayName": "Sand",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 102,
+            "y": 52,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 52,
+                "displayName": "Oil",
+                "amount": 200,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:200L}",
+                "kind": "fluid",
+                "fluidName": "oil"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 12,
+          "durationTicks": 200,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.centrifuge",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        },
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1983",
+        "epoch": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a",
+        "cacheTtlSeconds": 300,
+        "capturedAtEpochMillis": 1793345456422,
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "sampledTick": 1080,
+        "sampledAtMillis": 1793345456565
+      }
+    },
+    {
+      "tool": "find_machines",
+      "arguments": {
+        "radius": 32,
+        "limit": 100
+      },
+      "isError": false,
+      "data": {
+        "dimension": 0,
+        "radius": 32,
+        "tiles": [
+          {
+            "x": 2,
+            "y": 65,
+            "z": 0,
+            "tileType": "net.minecraft.tileentity.TileEntityChest"
+          },
+          {
+            "x": 4,
+            "y": 65,
+            "z": 0,
+            "tileType": "net.minecraft.tileentity.TileEntityFurnace"
+          }
+        ],
+        "complete": true,
+        "coverage": "loaded_tile_entities_only; includes_non_machines",
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "source": "integrated_server",
+        "sampledTick": 1071,
+        "sampledAtMillis": 1793345456830
+      }
+    },
+    {
+      "tool": "inspect_machine",
+      "arguments": {
+        "x": 2,
+        "y": 65,
+        "z": 0
+      },
+      "isError": false,
+      "data": {
+        "dimension": 0,
+        "x": 2,
+        "y": 65,
+        "z": 0,
+        "registryName": "minecraft:chest",
+        "meta": 3,
+        "tileType": "net.minecraft.tileentity.TileEntityChest",
+        "inventory": {
+          "slotCount": 27,
+          "slots": [
+            {
+              "slot": 0,
+              "item": {
+                "registryName": "minecraft:iron_ingot",
+                "meta": 0,
+                "displayName": "Iron Ingot",
+                "count": 64,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 1,
+              "item": {
+                "registryName": "minecraft:redstone",
+                "meta": 0,
+                "displayName": "Redstone Dust",
+                "count": 32,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 2,
+              "item": {
+                "registryName": "minecraft:log",
+                "meta": 0,
+                "displayName": "Oak Log",
+                "count": 16,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            }
+          ],
+          "complete": true
+        },
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "source": "integrated_server",
+        "sampledTick": 1075,
+        "sampledAtMillis": 1793345457033
+      }
+    },
+    {
+      "tool": "get_inventory",
+      "arguments": {
+        "x": 2,
+        "y": 65,
+        "z": 0,
+        "scope": "container"
+      },
+      "isError": false,
+      "data": {
+        "scope": "container",
+        "dimension": 0,
+        "x": 2,
+        "y": 65,
+        "z": 0,
+        "inventory": {
+          "slotCount": 27,
+          "slots": [
+            {
+              "slot": 0,
+              "item": {
+                "registryName": "minecraft:iron_ingot",
+                "meta": 0,
+                "displayName": "Iron Ingot",
+                "count": 64,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 1,
+              "item": {
+                "registryName": "minecraft:redstone",
+                "meta": 0,
+                "displayName": "Redstone Dust",
+                "count": 32,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 2,
+              "item": {
+                "registryName": "minecraft:log",
+                "meta": 0,
+                "displayName": "Oak Log",
+                "count": 16,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            }
+          ],
+          "complete": true
+        },
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "source": "integrated_server",
+        "sampledTick": 1081,
+        "sampledAtMillis": 1793345457332
+      }
+    },
+    {
+      "tool": "inspect_target",
+      "arguments": {},
+      "isError": false,
+      "data": {
+        "dimension": 0,
+        "x": 2,
+        "y": 65,
+        "z": 0,
+        "registryName": "minecraft:chest",
+        "meta": 3,
+        "tileType": "net.minecraft.tileentity.TileEntityChest",
+        "inventory": {
+          "slotCount": 27,
+          "slots": [
+            {
+              "slot": 0,
+              "item": {
+                "registryName": "minecraft:iron_ingot",
+                "meta": 0,
+                "displayName": "Iron Ingot",
+                "count": 64,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 1,
+              "item": {
+                "registryName": "minecraft:redstone",
+                "meta": 0,
+                "displayName": "Redstone Dust",
+                "count": 32,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 2,
+              "item": {
+                "registryName": "minecraft:log",
+                "meta": 0,
+                "displayName": "Oak Log",
+                "count": 16,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            }
+          ],
+          "complete": true
+        },
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "source": "integrated_server",
+        "sampledTick": 1088,
+        "sampledAtMillis": 1793345457680
+      }
+    },
+    {
+      "tool": "get_inventory",
+      "arguments": {},
+      "isError": true,
+      "data": {
+        "error": {
+          "code": "world_paused",
+          "message": "Resume the singleplayer world to obtain a fresh server snapshot."
+        }
+      }
+    },
+    {
+      "tool": "get_inventory",
+      "arguments": {},
+      "isError": false,
+      "data": {
+        "scope": "player",
+        "inventory": {
+          "slotCount": 41,
+          "slots": [
+            {
+              "slot": 0,
+              "item": {
+                "registryName": "minecraft:iron_ingot",
+                "meta": 0,
+                "displayName": "Iron Ingot",
+                "count": 32,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 1,
+              "item": {
+                "registryName": "minecraft:redstone",
+                "meta": 0,
+                "displayName": "Redstone Dust",
+                "count": 16,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 2,
+              "item": {
+                "registryName": "minecraft:diamond",
+                "meta": 0,
+                "displayName": "Diamond",
+                "count": 3,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            }
+          ],
+          "complete": true
+        },
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "source": "integrated_server",
+        "sampledTick": 1111,
+        "sampledAtMillis": 1793345459730
+      }
+    },
+    {
+      "tool": "get_context",
+      "arguments": {},
+      "isError": false,
+      "data": {
+        "targetPack": "2.9.0-RC-2",
+        "installedMods": {
+          "NotEnoughItems": "2.8.155-GTNH",
+          "gregtech": "5.09.54.205",
+          "gtnhlib": "0.11.52"
+        },
+        "worldLoaded": true,
+        "mode": "singleplayer",
+        "paused": false,
+        "player": {
+          "name": "McpAcceptance",
+          "dimension": 0,
+          "position": {
+            "x": 0.5,
+            "y": 66.62000000476837,
+            "z": 0.5
+          },
+          "health": 20.0,
+          "food": 20,
+          "selectedSlot": 0,
+          "heldItem": {
+            "registryName": "minecraft:iron_ingot",
+            "meta": 0,
+            "displayName": "Iron Ingot",
+            "count": 32,
+            "nbt": null,
+            "nbtOmitted": false
+          }
+        },
+        "capabilities": {
+          "recipes": true,
+          "playerInventory": true,
+          "authoritativeWorldReads": true,
+          "writeActions": false
+        },
+        "summary": "GTNH MCP 0.1.0; read-only, NEI recipe queries and bounded world snapshots.",
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "source": "client",
+        "sampledTick": 1147,
+        "sampledAtMillis": 1793345459913
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1983"
+      },
+      "isError": false,
+      "data": {
+        "handlerId": "gregtech.nei.GTNEIDefaultHandler",
+        "category": "Centrifuge",
+        "source": "nei_client",
+        "ingredients": [
+          {
+            "role": "input",
+            "x": 30,
+            "y": 14,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "consumed",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "minecraft:soul_sand",
+                "meta": 0,
+                "displayName": "Soul Sand",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false,
+            "nonConsumed": false
+          }
+        ],
+        "result": null,
+        "otherSlots": [
+          {
+            "role": "output",
+            "x": 102,
+            "y": 5,
+            "chance": 1000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 2836,
+                "displayName": "Saltpeter Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 120,
+            "y": 5,
+            "chance": 700,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 2,
+            "alternatives": [
+              {
+                "registryName": "gregtech:gt.metaitem.01",
+                "meta": 2535,
+                "displayName": "Coal Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              },
+              {
+                "registryName": "IC2:itemDust",
+                "meta": 2,
+                "displayName": "Coal Dust",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 138,
+            "y": 5,
+            "chance": 9000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "minecraft:sand",
+                "meta": 0,
+                "displayName": "Sand",
+                "amount": 1,
+                "unit": "item",
+                "amountSource": "GregTech realStackSize",
+                "kind": "item"
+              }
+            ],
+            "alternativesTruncated": false
+          },
+          {
+            "role": "output",
+            "x": 102,
+            "y": 52,
+            "chance": 10000,
+            "chanceScale": 10000,
+            "chanceMeaning": "produced",
+            "alternativesTotal": 1,
+            "alternatives": [
+              {
+                "registryName": "NotEnoughItems:neiFluidDisplay",
+                "meta": 52,
+                "displayName": "Oil",
+                "amount": 200,
+                "unit": "mB",
+                "amountSource": "NEI fluid display data",
+                "nbt": "{neiFluidDisplayAmount:200L}",
+                "kind": "fluid",
+                "fluidName": "oil"
+              }
+            ],
+            "alternativesTruncated": false
+          }
+        ],
+        "alternativesAreChoices": true,
+        "truncated": false,
+        "conditionsComplete": false,
+        "gregtech": {
+          "euPerTick": 12,
+          "durationTicks": 200,
+          "specialValueRaw": 0,
+          "enabled": true,
+          "fakeRecipe": false,
+          "nbtSensitive": false,
+          "recipeMapId": "gt.recipe.centrifuge",
+          "amperage": 1,
+          "powerIsBaseRecipeValue": true,
+          "specialConditions": "Not fully decoded; inspect the in-game NEI recipe for heat, cleanroom and other requirements."
+        },
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1983",
+        "epoch": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a",
+        "cacheTtlSeconds": 300,
+        "capturedAtEpochMillis": 1793345456422,
+        "worldSessionId": "ea02a823-434c-4c3b-b13e-b438e861dc58",
+        "sampledTick": 1149,
+        "sampledAtMillis": 1793345460017
+      }
+    },
+    {
+      "tool": "get_context",
+      "arguments": {},
+      "isError": false,
+      "data": {
+        "targetPack": "2.9.0-RC-2",
+        "installedMods": {
+          "NotEnoughItems": "2.8.155-GTNH",
+          "gregtech": "5.09.54.205",
+          "gtnhlib": "0.11.52"
+        },
+        "worldLoaded": false,
+        "mode": "menu",
+        "paused": false,
+        "player": null,
+        "capabilities": {
+          "recipes": false,
+          "playerInventory": false,
+          "authoritativeWorldReads": false,
+          "writeActions": false
+        },
+        "summary": "GTNH MCP 0.1.0; read-only, NEI recipe queries and bounded world snapshots.",
+        "worldSessionId": "no_world",
+        "source": "client",
+        "sampledTick": 1163,
+        "sampledAtMillis": 1793345460800
+      }
+    },
+    {
+      "tool": "get_context",
+      "arguments": {},
+      "isError": false,
+      "data": {
+        "targetPack": "2.9.0-RC-2",
+        "installedMods": {
+          "NotEnoughItems": "2.8.155-GTNH",
+          "gregtech": "5.09.54.205",
+          "gtnhlib": "0.11.52"
+        },
+        "worldLoaded": true,
+        "mode": "singleplayer",
+        "paused": false,
+        "player": {
+          "name": "McpAcceptance",
+          "dimension": 0,
+          "position": {
+            "x": 0.5,
+            "y": 66.62000000476837,
+            "z": 0.5
+          },
+          "health": 20.0,
+          "food": 20,
+          "selectedSlot": 0,
+          "heldItem": {
+            "registryName": "minecraft:iron_ingot",
+            "meta": 0,
+            "displayName": "Iron Ingot",
+            "count": 32,
+            "nbt": null,
+            "nbtOmitted": false
+          }
+        },
+        "capabilities": {
+          "recipes": true,
+          "playerInventory": true,
+          "authoritativeWorldReads": true,
+          "writeActions": false
+        },
+        "summary": "GTNH MCP 0.1.0; read-only, NEI recipe queries and bounded world snapshots.",
+        "worldSessionId": "ae3d3b3c-a90f-45d4-bca8-e62806d55d41",
+        "source": "client",
+        "sampledTick": 1223,
+        "sampledAtMillis": 1793345467806
+      }
+    },
+    {
+      "tool": "get_inventory",
+      "arguments": {},
+      "isError": false,
+      "data": {
+        "scope": "player",
+        "inventory": {
+          "slotCount": 41,
+          "slots": [
+            {
+              "slot": 0,
+              "item": {
+                "registryName": "minecraft:iron_ingot",
+                "meta": 0,
+                "displayName": "Iron Ingot",
+                "count": 32,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 1,
+              "item": {
+                "registryName": "minecraft:redstone",
+                "meta": 0,
+                "displayName": "Redstone Dust",
+                "count": 16,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            },
+            {
+              "slot": 2,
+              "item": {
+                "registryName": "minecraft:diamond",
+                "meta": 0,
+                "displayName": "Diamond",
+                "count": 3,
+                "nbt": null,
+                "nbtOmitted": false
+              }
+            }
+          ],
+          "complete": true
+        },
+        "worldSessionId": "ae3d3b3c-a90f-45d4-bca8-e62806d55d41",
+        "source": "integrated_server",
+        "sampledTick": 1185,
+        "sampledAtMillis": 1793345467938
+      }
+    },
+    {
+      "tool": "get_recipe",
+      "arguments": {
+        "recipeId": "ec95a47f-3a11-465a-a4e6-e32aef5b0e3a:1983"
+      },
+      "isError": true,
+      "data": {
+        "error": {
+          "code": "game_request_failed",
+          "message": "Recipe ID expired or unknown. Run find_recipes/find_usages again to obtain a current recipeId."
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "modListVersion": 2,
+  "modList": [
+    {
+      "modid": "${modId}",
+      "name": "${modName}",
+      "description": "Local read-only MCP tools for GTNH 2.9.0-RC-2: NEI recipes, item search, player inventory and machine snapshots.",
+      "version": "${modVersion}",
+      "mcversion": "${minecraftVersion}",
+      "url": "",
+      "authorList": [
+        "GTNH MCP contributors"
+      ],
+      "credits": "Built with the GTNH project starter and the official MCP Java SDK.",
+      "logoFile": "",
+      "screenshots": [],
+      "useDependencyInformation": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+// Exact versions selected by the official GTNH 2.9.0-RC-2 manifest:
+// https://github.com/GTNewHorizons/DreamAssemblerXXL/blob/3dce613855c59dfa98dd30d90d5cfdd21c566bf7/releases/manifests/2.9.0-RC-2.json
+// Do not replace these with versions from a local beta instance.
+dependencies {
+    compileOnly("com.github.GTNewHorizons:NotEnoughItems:2.8.155-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:CodeChickenCore:1.4.22:dev")
+    compileOnly("com.github.GTNewHorizons:GTNHLib:0.11.52:dev")
+
+    // SDK requires Java 17 or newer. Relocated into the mod by the official GTNH build plugin.
+    shadowImplementation("io.modelcontextprotocol.sdk:mcp:2.1.0")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
