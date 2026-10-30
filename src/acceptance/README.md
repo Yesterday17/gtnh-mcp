@@ -2,7 +2,7 @@
 
 This is a separate test-only Forge mod. `src/acceptance` is not part of the production source set, production jar, or production sources jar. It does not add any MCP tools or change production tool behavior.
 
-Build it with `./gradlew reobfAcceptanceJar`. Install **both** `gtnhmcp-0.2.0.jar` and `gtnhmcp-acceptance-0.2.0.jar` only in an isolated GTNH 2.9.0-RC-2 test instance. Enable the fixture with JVM properties:
+Build it with `./gradlew reobfAcceptanceJar`. Install **both** `gtnhmcp-0.3.0.jar` and `gtnhmcp-acceptance-0.3.0.jar` only in an isolated GTNH 2.9.0-RC-2 test instance. Enable the fixture with JVM properties:
 
 ```text
 -Dgtnhmcp.acceptance=true

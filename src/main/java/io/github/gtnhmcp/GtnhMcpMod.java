@@ -11,7 +11,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 @Mod(
     modid = GtnhMcpMod.MODID,
     name = "GTNH MCP",
-    version = "0.2.0",
+    version = "0.3.0",
+    guiFactory = "io.github.gtnhmcp.config.LocalConfigGuiFactory",
     acceptedMinecraftVersions = "[1.7.10]",
     acceptableRemoteVersions = "*",
     dependencies = "required-after:NotEnoughItems@[2.8.155-GTNH,);after:gregtech")

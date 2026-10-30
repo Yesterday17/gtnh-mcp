@@ -76,7 +76,7 @@ class Client:
         result = self.request('initialize', {
             'protocolVersion': PROTOCOL,
             'capabilities': {},
-            'clientInfo': {'name': 'gtnhmcp-probe', 'version': '0.2.0'},
+            'clientInfo': {'name': 'gtnhmcp-probe', 'version': '0.3.0'},
         })
         self.request('notifications/initialized', notification=True)
         return result

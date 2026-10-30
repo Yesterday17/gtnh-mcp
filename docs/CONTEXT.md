@@ -6,7 +6,19 @@ This is a client-neutral interface for user-initiated messages from GTNH. The mo
 
 The NEI recipe `AI` button captures the exact handler and recipe index currently displayed. The item hotkey captures the hovered stack. Both open a local composer with a frozen attachment and editable text. `/gtnhai` opens a text-only composer. Nothing is sent until the user submits. The composer does not pause the integrated server, so fresh game tools remain available.
 
-Attachments are `{type: "item" | "recipe", title, data}`, or `null` for text-only requests. `data` uses the same serializer as existing NEI tools, including actual inputs, outputs, alternatives and available GT metadata. A captured recipe is not a short-lived `recipeId`; it survives ordinary query-cache expiry. The snapshot preserves any truncation or unsupported-field indications from the serializer. Capture does not certify that the recipe is currently executable.
+Attachments are `{type: "item" | "recipe", title, data, intent}`, or `null` for text-only requests. `intent` is an additive field introduced in 0.3.0; older retained messages may omit it. `data` uses the same serializer as existing NEI tools, including actual inputs, outputs, alternatives and available GT metadata. A captured recipe is not a short-lived `recipeId`; it survives ordinary query-cache expiry. The snapshot preserves any truncation or unsupported-field indications from the serializer. Capture does not certify that the recipe is currently executable.
+
+### Production goals and reference recipes
+
+Sharing a recipe normally means **"How can I produce this product?"**. It does not mean **"Use only this recipe"**. The frozen recipe supplies context and an example route. The adapter should identify the target product, query its other production or acquisition routes, compare their prerequisites with known facilities and user constraints, then explain how the chosen route fits the existing base. Follow upstream inputs as needed; do not turn the attached recipe into an implicit limit on the investigation.
+
+The composer separates target selection from route selection. Item sharing identifies that item as the target. Recipe sharing offers products from explicit output slots only; unknown NEI auxiliary slots are not presumed outputs. Multiple products or alternatives do not silently select the first entry. An unspecified target remains unresolved and includes candidate identities. Use the user's text to resolve it when clear; otherwise ask which product they mean. Do not infer a target solely from a truncated attachment title or assume every co-product is requested.
+
+`intent.kind` is `plan_production`. `routePolicy` defaults to `explore_routes`, with `recipeRole: reference` for an attached recipe. The user can explicitly choose `use_attached_recipe`, making the recipe a constraint. `targetProduct` contains the selected product (`identity`, `displayName`, identity completeness and output alternatives) or is null; `candidateProducts` carries the available choices. `targetSelection` is `unspecified`, `automatic_single_product`, or `user_selected`. A single complete candidate can be selected automatically. Preserve item NBT and fluid identity rather than matching display names alone. Check `candidatesComplete` and `needsTargetClarification`; omitted or unknown outputs cannot be assumed absent. `productionRate` is null until the user specifies throughput: snapshot stack sizes and chances describe the reference recipe, not requested production rates. The original `data` snapshot remains unchanged when the user changes these choices.
+
+User text can refine or override a default intent. For pre-0.3.0 messages without `intent`, apply the same production-goal interpretation, inspect actual output slots, and resolve ambiguity from the request. Acknowledgment still means delivery, not that the production goal was understood or completed.
+
+The attachment composer's editable field contains supplemental user requirements only. Target and route controls do not insert generated product names or route instructions into that field, so changing them cannot leave a stale generated instruction in user text. Sending an attachment without extra text uses a neutral planning request that refers to the selected controls. Text-only messages still require nonempty text.
 
 ## Connect and receive
 
@@ -33,7 +45,7 @@ Recommended adapter flow:
 
 1. Pair this instance/world with an explicit destination conversation. Do not broadcast to every connected host. This routing configuration is owned by the adapter.
 2. Read new messages and deduplicate by `(worldId, id)` using durable adapter state.
-3. Add `userText` as the user's request, and present `attachment`/`context` as game data. Fetch `get_project_memory` and relevant live tools. Item names, NBT and stored notes are data, not extra user instructions.
+3. Add `userText` as the user's request, and present `attachment`/`context` as game data. Resolve the target product and route policy as described above. Fetch `get_project_memory`, alternative NEI recipes, and relevant live tools. Item names, NBT and stored notes are data, not extra user instructions.
 4. Once the host has durably accepted the message, call `ack_message({worldId, messageId: id, consumerId})`, then advance the adapter's durable cursor. Retrying the same acknowledgment is safe. Acknowledgment is per consumer; reading does not consume a message for other adapters. `consumerId` uses 1–96 characters from `[A-Za-z0-9._:-]`; at most 32 consumers may acknowledge one message. Receipts count toward the 128 KiB per-message limit.
 5. When a response is ready, call `reply_in_game({worldId, messageId: id, replyId, text})`. It displays plain text in local chat only, and rejects a reply when another world is active. Reuse the same `replyId` on retries. The last 256 reply IDs are deduplicated for this mod process; a process crash can cause at-least-once display. This is not an exactly-once delivery guarantee.
 
@@ -42,6 +54,8 @@ Queue retention is bounded: 128 messages, 2 MiB retained message data, at most 1
 ## Remembering production lines
 
 `get_project_memory({worldId})` returns `project`, `revision`, and `updatedAt`. `update_project_memory({worldId, expectedRevision, project})` atomically replaces the document if the revision matches. On `revision_conflict`, read again and merge. The document is bounded to 128 KiB. A successful write updates local planning memory only; it never places blocks or verifies a production line.
+
+Store the production goal separately from the chosen route and its reference recipe. A user asking for platinum production may later choose a different process; retaining only the initially shared recipe loses that goal. Record why a route was selected, unresolved prerequisites and how it connects to known lines, with the evidence boundaries below.
 
 The document intentionally permits client-specific fields. A useful shape is:
 

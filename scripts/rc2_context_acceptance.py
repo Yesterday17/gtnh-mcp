@@ -58,7 +58,7 @@ def push(uri,timeout=8):
     return False
 try:
     init=c.initialize();sub.initialize()
-    check('production MCP version and resources',init['protocolVersion']==PROTOCOL and init['serverInfo']['version']=='0.2.0' and init['capabilities']['resources']['subscribe'])
+    check('production MCP version and resources',init['protocolVersion']==PROTOCOL and init['serverInfo']['version']=='0.3.0' and init['capabilities']['resources']['subscribe'])
     definitions=c.request('tools/list')['tools'];check('all 15 tools',len(definitions)==15)
     byname={t['name']:t for t in definitions}
     check('local writes marked non-read-only',all(not byname[n]['annotations']['readOnlyHint'] for n in ['ack_message','update_project_memory','reply_in_game']))

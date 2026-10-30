@@ -1,3 +1,20 @@
+# 0.3.0 dynamic settings and production intent
+
+Target remains **GTNH 2.9.0-RC-2**. This version adds the Forge Mods configuration entry and production-goal metadata; the running 0.2.0 playtest was kept running and was not upgraded during these checks.
+
+Final build: `./gradlew --no-daemon spotlessApply test build reobfAcceptanceJar` passed, with **60 tests**, Spotless and Checkstyle. The final shaded/reobfuscated artifact passed a standalone loopback MCP initialize → tools/list → tools/call probe with a fake game callback. Jar SHA-256: `7884e25db35299095fdafac261d6d4dc5524671787cf21c6bb4a31e60d5e1608`. [Validation summary](validation/config-intent-0.3.0-summary.json).
+
+Automated validation covers:
+
+- Initial listener disabled, runtime enable/disable/re-enable, port rebinding, occupied-port rollback, save-failure rollback, nonblocking game-thread entry points, and shutdown during a change.
+- A real loopback MCP session survives a rejected port change. Successful rebinding invalidates the old session, accepts a new session, and retains the active world's inbox and planning memory. A message queued while disabled is available after re-enabling.
+- Private atomic configuration writes preserve the token and unknown properties; invalid ports are rejected.
+- Production targets distinguish item/fluid identities, repeated products, alternatives, unknown slots, truncated identities and multi-output ambiguity. Default intent explores alternative routes; explicitly selecting the attached recipe constrains the route.
+
+The production code and separate acceptance fixture compile and reobfuscate against the pinned RC2 APIs. The updated in-game acceptance fixture includes target selection, route changes, supplemental-text preservation and resize checks, but **has not been executed in the running game for 0.3.0**. The new configuration screen likewise has not received live GUI validation. Compilation and HTTP tests do not establish visual usability.
+
+The following historical records apply only to their stated versions and artifact hashes.
+
 # 0.2.0 context-sharing acceptance
 
 Tested against the isolated official **GTNH 2.9.0-RC-2** Java 17–26 instance, on Apple Silicon with Java 25. No local beta2 instance or personal save was used.

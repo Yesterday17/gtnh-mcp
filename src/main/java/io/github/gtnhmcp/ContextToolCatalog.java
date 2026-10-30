@@ -19,13 +19,13 @@ public final class ContextToolCatalog {
         return Arrays.asList(
             tool(
                 "get_messages",
-                "Read user-submitted game context messages after a per-world sequence. Messages contain frozen item/recipe attachments and user text. Client adapters must bind a conversation, deduplicate IDs, and explicitly start an agent turn; MCP notifications alone do not do this. Check gap/hasMore.",
+                "Read user-submitted game context messages after a per-world sequence. Attachments identify a production goal: use attachment.intent.targetProduct when selected and explore alternative production routes by default. An attached recipe is reference context, not a required or exclusive route, unless the user explicitly constrains it. Resolve ambiguous target products using user text or clarification. Client adapters must bind a conversation, deduplicate IDs, and explicitly start an agent turn; MCP notifications alone do not do this. Check gap/hasMore.",
                 true,
                 map("worldId", world, "afterSequence", number(0, Integer.MAX_VALUE), "limit", number(1, 20)),
                 "worldId"),
             tool(
                 "get_message",
-                "Read one retained context message, including its exact captured attachment.",
+                "Read one retained context message, including its frozen attachment and production intent. A recipe snapshot is reference context for producing the target product; do not limit planning to that recipe unless the user requests it. Older messages without intent require the same interpretation from user text and actual output identities.",
                 true,
                 map("worldId", world, "messageId", message),
                 "worldId",

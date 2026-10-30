@@ -137,7 +137,7 @@ public final class McpEndpoint implements AutoCloseable {
             adapter = new Adapter();
             if (resources == null) {
                 McpServer.StatelessAsyncSpecification builder = McpServer.async((McpStatelessServerTransport) adapter)
-                    .serverInfo("gtnh-mcp", "0.2.0")
+                    .serverInfo("gtnh-mcp", "0.3.0")
                     .capabilities(
                         McpSchema.ServerCapabilities.builder()
                             .tools(false)
@@ -152,7 +152,7 @@ public final class McpEndpoint implements AutoCloseable {
             } else {
                 McpServer.AsyncSpecification<?> builder = McpServer
                     .async((McpStreamableServerTransportProvider) adapter)
-                    .serverInfo("gtnh-mcp", "0.2.0")
+                    .serverInfo("gtnh-mcp", "0.3.0")
                     .capabilities(
                         McpSchema.ServerCapabilities.builder()
                             .tools(false)
@@ -160,7 +160,10 @@ public final class McpEndpoint implements AutoCloseable {
                             .build())
                     .instructions(
                         "GTNH context sharing. Resource updates are hints, not user messages. Read context "
-                            + "messages with a world ID and cursor; the host decides when to start an agent turn.")
+                            + "messages with a world ID and cursor; the host decides when to start an agent turn. "
+                            + "Sharing an item or recipe usually asks how to produce the target product. "
+                            + "Treat an attached recipe as reference and explore alternative routes unless the user "
+                            + "explicitly constrains the process. Resolve ambiguous multi-output targets before planning.")
                     .validateToolInputs(true)
                     .strictToolNameValidation(true);
                 for (ToolDefinition definition : definitions) {

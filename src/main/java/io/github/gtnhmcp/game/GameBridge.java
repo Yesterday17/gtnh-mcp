@@ -202,7 +202,7 @@ public final class GameBridge {
                     "localContextWrites",
                     contextStore != null),
                 "summary",
-                "GTNH MCP 0.2.0; read-only game queries, context sharing and local planning memory.",
+                "GTNH MCP 0.3.0; read-only game queries, production-goal sharing and local planning memory.",
                 "worldId",
                 contextStore == null ? null : contextStore.activeWorldId(),
                 "contextSharing",

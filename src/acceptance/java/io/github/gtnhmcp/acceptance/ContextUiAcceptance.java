@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -33,6 +34,7 @@ import codechicken.nei.recipe.RecipeHandlerRef;
 import codechicken.nei.recipe.widget.RecipeWidget;
 import codechicken.nei.scroll.ScrollContainer;
 import io.github.gtnhmcp.context.ContextStore;
+import io.github.gtnhmcp.context.ProductionIntent;
 import io.github.gtnhmcp.game.GameBridge;
 import io.github.gtnhmcp.nei.NeiSerializer;
 import io.github.gtnhmcp.protocol.ResourceProvider;
@@ -55,6 +57,7 @@ public final class ContextUiAcceptance {
     private String worldId;
     private long sequence;
     private Map<String, Object> expectedRecipe;
+    private Map<String, Object> expectedIntent;
     private GuiRecipe<?> recipeScreen;
     private String text;
     private String recipeText;
@@ -70,7 +73,7 @@ public final class ContextUiAcceptance {
         error = null;
         status = "running";
         text = "UI acceptance text request " + System.currentTimeMillis();
-        recipeText = "Plan this exact recipe. Reuse my centrifuge; target 12 batches per minute.";
+        recipeText = "Use LV machines only. Reuse existing lines; target 12 units per minute.";
         try {
             Minecraft mc = Minecraft.getMinecraft();
             require(
@@ -237,11 +240,33 @@ public final class ContextUiAcceptance {
                 && gt.containsKey("durationTicks"));
         GuiTextField input = (GuiTextField) field(screen, "input");
         check(
-            "recipe_composer_prefills_a_planning_request",
-            !input.getText()
+            "recipe_requirements_field_contains_no_generated_goal_or_policy",
+            input.getText()
                 .trim()
                 .isEmpty());
+        ProductionIntent intent = (ProductionIntent) field(screen, "productionIntent");
+        check(
+            "multiple_outputs_do_not_silently_select_a_product",
+            intent.candidates()
+                .size() > 1 && ((Integer) field(screen, "selectedTargetIndex")) == -1);
+        check("production_routes_are_explored_by_default", Boolean.FALSE.equals(field(screen, "useAttachedRecipe")));
+        action(screen, 2);
+        check("target_can_be_selected_explicitly", ((Integer) field(screen, "selectedTargetIndex")) == 0);
         input.setText(recipeText);
+        action(screen, 2);
+        action(screen, 3);
+        check("using_the_attached_recipe_is_explicit_opt_in", Boolean.TRUE.equals(field(screen, "useAttachedRecipe")));
+        check(
+            "changing_target_and_route_keeps_only_authored_requirements",
+            ((Integer) field(screen, "selectedTargetIndex")) == 1 && recipeText.equals(input.getText()));
+        action(screen, 3);
+        screen.initGui();
+        check(
+            "resize_preserves_target_mode_and_user_text",
+            ((Integer) field(screen, "selectedTargetIndex")) == 1
+                && Boolean.FALSE.equals(field(screen, "useAttachedRecipe"))
+                && recipeText.equals(((GuiTextField) field(screen, "input")).getText()));
+        expectedIntent = intent.snapshot(1, true, false);
         key(screen, '\r', Keyboard.KEY_RETURN);
         check("recipe_submit_returns_to_original_nei_screen", Minecraft.getMinecraft().currentScreen == recipeScreen);
     }
@@ -250,6 +275,9 @@ public final class ContextUiAcceptance {
         Map<String, Object> event = onlyNewMessage();
         Map<?, ?> attachment = (Map<?, ?>) event.get("attachment");
         check("persisted_recipe_snapshot_matches_clicked_recipe", expectedRecipe.equals(attachment.get("data")));
+        check(
+            "persisted_intent_targets_product_and_keeps_recipe_as_reference",
+            expectedIntent.equals(attachment.get("intent")));
         check("recipe_message_includes_extra_requirements", recipeText.equals(event.get("userText")));
         rememberMessage(event, "recipe");
     }
@@ -274,7 +302,10 @@ public final class ContextUiAcceptance {
         summary.put("kind", kind);
         summary.put("id", event.get("id"));
         summary.put("sequence", event.get("sequence"));
-        if ("recipe".equals(kind)) summary.put("recipe", expectedRecipe);
+        if ("recipe".equals(kind)) {
+            summary.put("recipe", expectedRecipe);
+            summary.put("intent", expectedIntent);
+        }
         messages.add(summary);
     }
 
@@ -296,6 +327,31 @@ public final class ContextUiAcceptance {
         return screen != null && COMPOSER.equals(
             screen.getClass()
                 .getName());
+    }
+
+    private static void action(GuiScreen screen, int id) throws Exception {
+        Object buttons;
+        try {
+            buttons = field(screen, "buttonList");
+        } catch (NoSuchFieldException absent) {
+            buttons = field(screen, "field_146292_n");
+        }
+        for (Object raw : (List<?>) buttons) {
+            GuiButton button = (GuiButton) raw;
+            if (button.id != id) continue;
+            for (String name : new String[] { "actionPerformed", "func_146284_a" }) {
+                try {
+                    Method method = screen.getClass()
+                        .getDeclaredMethod(name, GuiButton.class);
+                    method.setAccessible(true);
+                    method.invoke(screen, button);
+                    return;
+                } catch (NoSuchMethodException absent) {
+                    // Production override has MCP names in dev and SRG names in the game.
+                }
+            }
+        }
+        throw new IllegalStateException("The requested composer control does not exist");
     }
 
     private static Object field(Object target, String name) throws Exception {
